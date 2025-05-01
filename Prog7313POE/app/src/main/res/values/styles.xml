@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name = "ThriftsenseText" parent="TextAppearance.AppCompat">
+        <item name = "android:layout_width">match_parent</item>
+        <item name = "android:layout_height">wrap_content</item>
+        <item name = "android:fontFamily">@font/abril_fatface</item>
+        <item name = "android:textAlignment">center</item>
+        <item name = "android:textColor">@color/black</item>
+        <item name = "android:textSize">40sp</item>
+    </style>
+
+    <style name = "ThriftsenseButton" parent="TextAppearance.AppCompat">
+        <item name = "android:layout_width">match_parent</item>
+        <item name = "android:layout_height">190.5dp</item>
+        <item name = "android:background">@color/white</item>
+        <item name = "android:fontFamily">@font/abril_fatface</item>
+        <item name = "android:textColor">@color/black</item>
+        <item name = "android:textSize">34sp</item>
+    </style>
+</resources>

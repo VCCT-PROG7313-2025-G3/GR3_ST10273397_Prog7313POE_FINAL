@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".ui.login.MyLoginActivity">
+
+    <TextView
+        android:id="@+id/tv_logingreeting"
+        style="@style/ThriftsenseText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login" />
+
+    <TextView
+        android:id="@+id/tv_email"
+        style="@style/ThriftsenseText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email Address: "
+        android:textAlignment="textStart"
+        android:textSize="34sp" />
+
+    <EditText
+        android:id="@+id/etxt_email"
+        style="@style/ThriftsenseText"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:ems="10"
+        android:hint="Email Adress"
+        android:inputType="textEmailAddress"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tv_password"
+        style="@style/ThriftsenseText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Password: "
+        android:textAlignment="textStart"
+        android:textSize="34sp" />
+
+    <EditText
+        android:id="@+id/etxt_password"
+        style="@style/ThriftsenseText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:selectAllOnFocus="true"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/btn_login"
+        style="@style/ThriftsenseButton"
+        android:layout_width="373dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:enabled="false"
+        android:text="Login" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        style="@style/ThriftsenseButton"
+        android:layout_width="373dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="64dp"
+        android:enabled="false"
+        android:text="Cancel" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="64dp"
+        android:visibility="gone" />
+
+</LinearLayout>
