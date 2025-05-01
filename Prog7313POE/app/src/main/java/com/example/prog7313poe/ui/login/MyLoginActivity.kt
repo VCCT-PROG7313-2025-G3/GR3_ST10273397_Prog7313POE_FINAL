@@ -57,7 +57,9 @@ class MyLoginActivity : AppCompatActivity() {
             if (result.success != null) {
                 updateUiWithUser(result.success)
                 // Navigate to home screen
-                startActivity(Intent(this, MyHomeActivity::class.java))
+                val intent = Intent(this, MyHomeActivity::class.java)
+                intent.putExtra("email", binding.etxtEmail?.text.toString())
+                startActivity(intent)
                 setResult(Activity.RESULT_OK)
                 finish()
             }

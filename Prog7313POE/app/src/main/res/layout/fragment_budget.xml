@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Budget Summary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"  android:layout_height="100dp" android:layout_width="100dp"/>
+
+        <TextView android:text="Monthly Budget: R5000.00" android:layout_height="100dp" android:layout_width="100dp"/>
+        <TextView android:text="Spent: R3280.00" android:layout_height="100dp" android:layout_width="100dp"/>
+        <TextView android:text="Remaining: R1720.00" android:layout_height="100dp" android:layout_width="100dp"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:text="Category Budgets"
+            android:textStyle="bold" />
+
+        <TextView android:text="Groceries: R1500.00" android:layout_height="100dp" android:layout_width="100dp"/>
+        <TextView android:text="Transport: R800.00" android:layout_height="100dp" android:layout_width="100dp"/>
+        <TextView android:text="Entertainment: R700.00" android:layout_height="100dp" android:layout_width="100dp"/>
+        <TextView android:text="Other: R2000.00" android:layout_height="100dp" android:layout_width="100dp"/>
+
+    </LinearLayout>
+</ScrollView>

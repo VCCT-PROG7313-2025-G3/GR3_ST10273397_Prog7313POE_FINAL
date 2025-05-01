@@ -52,4 +52,13 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="invalid_email">Please enter a valid email address</string>
+    <string-array name="currency_options">
+        <item>ZAR - South African Rand</item>
+        <item>USD - US Dollar</item>
+        <item>GBP - British Pound</item>
+        <item>EUR - Euro</item>
+        <item>CNY - Chinese Yuan</item>
+        <item>INR - Indian Rupee</item>
+    </string-array>
+
 </resources>

@@ -2,6 +2,7 @@ package com.example.prog7313poe.Database.users
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Update
 import androidx.room.Insert
 import androidx.room.Query
 
@@ -16,6 +17,9 @@ interface UserDAO {
 
     @Delete
     fun deleteUser(users: UserData): Int
+
+    @Update
+    fun updateUser(user: UserData): Int
 
     @Query("SELECT * FROM Users WHERE email = :email LIMIT 1")
     fun getUserByEmail(email: String): UserData?

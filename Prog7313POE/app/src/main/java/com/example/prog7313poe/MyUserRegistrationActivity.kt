@@ -89,7 +89,10 @@ class MyUserRegistrationActivity : AppCompatActivity() {
             }
             Toast.makeText(this@MyUserRegistrationActivity,
                 "You have successfully registered!", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this@MyUserRegistrationActivity, MyHomeActivity::class.java))
+            val intent = Intent(this@MyUserRegistrationActivity, MyHomeActivity::class.java)
+            intent.putExtra("email", emailText)
+            startActivity(intent)
+
         }
     }
 

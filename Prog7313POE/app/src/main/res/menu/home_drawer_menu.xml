@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_account"
+        android:icon="@drawable/ic_account"
+        android:title="Account details" />
+
+    <item
+        android:id="@+id/nav_dark_mode"
+        android:icon="@drawable/ic_dark_mode"
+        android:title="Dark mode"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="Log out" />
+
+    <item
+        android:id="@+id/nav_switch_user"
+        android:icon="@drawable/ic_switch_user"
+        android:title="Switch user" />
+
+</menu>
