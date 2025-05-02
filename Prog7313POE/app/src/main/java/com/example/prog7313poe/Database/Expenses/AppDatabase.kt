@@ -1,15 +1,16 @@
 package com.example.prog7313poe.Database.Expenses
 
-import androidx.room.Room
-import androidx.room.RoomDatabase
 import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
 
 @Database(entities = [ExpenseData::class], version = 1, exportSchema = false)
-abstract class AppDatabase: RoomDatabase() {
-    abstract fun userDAO(): ExpenseDAO
+abstract class AppDatabase : RoomDatabase() {
 
-    companion object{
+    abstract fun expenseDAO(): ExpenseDAO
+
+    companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -18,7 +19,7 @@ abstract class AppDatabase: RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "my_user_database"
+                    "expenses_database"
                 ).build()
                 INSTANCE = instance
                 instance

@@ -1,15 +1,16 @@
 package com.example.prog7313poe.Database.Budgets
 
-import androidx.room.Room
-import androidx.room.RoomDatabase
 import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
 
-@Database(entities = [BudgetData::class], version = 1, exportSchema = false)
-abstract class AppDatabase: RoomDatabase() {
-    abstract fun userDAO(): BudgetDAO
+@Database(entities = [BudgetData::class], version = 2, exportSchema = false) // ✅ bumped version
+abstract class AppDatabase : RoomDatabase() {
 
-    companion object{
+    abstract fun budgetDAO(): BudgetDAO
+
+    companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -18,11 +19,13 @@ abstract class AppDatabase: RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "my_user_database"
-                ).build()
+                    "budgets_database"
+                ).fallbackToDestructiveMigration() // ✅ avoids crash if schema changes
+                    .build()
                 INSTANCE = instance
                 instance
             }
         }
     }
 }
+
