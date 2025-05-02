@@ -35,14 +35,13 @@ class TransactionsFragment : Fragment() {
 
         binding.btnAddExpense.setOnClickListener {
             // ✅ Show dialog when button clicked
-            AddExpenseDialog(requireContext()) { newExpense ->
+            showAddExpenseDialog(requireContext()) { newExpense ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     AppDatabase.getDatabase(requireContext()).expenseDAO().insertExpense(newExpense)
                     loadExpenses()
                 }
-            }.show()
+            }
         }
-
         loadExpenses()
     }
 

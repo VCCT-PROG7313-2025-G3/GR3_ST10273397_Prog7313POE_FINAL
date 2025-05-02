@@ -9,6 +9,7 @@ import com.google.android.material.navigation.NavigationView
 import androidx.fragment.app.Fragment
 import android.view.Menu
 import android.view.MenuItem
+import com.example.prog7313poe.ui.expense.TransactionsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
