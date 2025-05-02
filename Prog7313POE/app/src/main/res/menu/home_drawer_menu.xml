@@ -3,22 +3,27 @@
     <item
         android:id="@+id/nav_account"
         android:icon="@drawable/ic_account"
-        android:title="Account details" />
+        android:title="@string/account_details" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:title="@string/settings" />
 
     <item
         android:id="@+id/nav_dark_mode"
         android:icon="@drawable/ic_dark_mode"
-        android:title="Dark mode"
+        android:title="@string/dark_mode"
         android:checkable="true" />
 
     <item
         android:id="@+id/nav_logout"
         android:icon="@drawable/ic_logout"
-        android:title="Log out" />
+        android:title="@string/log_out" />
 
     <item
         android:id="@+id/nav_switch_user"
         android:icon="@drawable/ic_switch_user"
-        android:title="Switch user" />
+        android:title="@string/switch_user" />
+
 
 </menu>

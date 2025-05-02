@@ -1,15 +1,14 @@
 package com.example.prog7313poe
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import androidx.fragment.app.Fragment
+import android.view.Menu
+import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -20,7 +19,6 @@ class MyHomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_my_home)
 
         //Set the current user's email from intent
@@ -33,22 +31,42 @@ class MyHomeActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
 
-        // Set hamburger icon
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
 
         // Handle navigation drawer item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_account -> true
-                R.id.nav_dark_mode -> true
-                R.id.nav_logout -> true
-                R.id.nav_switch_user -> true
+                R.id.nav_account -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, AccountDetailsFragment())
+                        .commit()
+                    true
+                }
+                R.id.nav_settings -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, SettingsFragment())
+                        .commit()
+                    true
+                }
+                R.id.nav_dark_mode -> {
+                    // TODO: Toggle dark mode logic here
+                    true
+                }
+                R.id.nav_logout -> {
+                    finish() // or navigate back to login screen
+                    true
+                }
+                R.id.nav_settings -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, SettingsFragment())
+                        .commit()
+                    true
+                }
                 else -> false
             }.also {
                 drawerLayout.closeDrawer(GravityCompat.END)
             }
         }
+
 
         // Bottom navigation setup
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
@@ -71,10 +89,27 @@ class MyHomeActivity : AppCompatActivity() {
             .commit()
 
         // System bars padding
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawerLayout)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+       /* ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar)) { v, insets ->
+            val topInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            v.setPadding(0, topInset, 0, 0)
             insets
+        }*/
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_drawer -> {
+                drawerLayout.openDrawer(GravityCompat.END)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
+
 }
