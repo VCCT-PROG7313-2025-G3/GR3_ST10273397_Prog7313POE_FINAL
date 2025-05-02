@@ -1,4 +1,4 @@
-package com.example.prog7313poe
+package com.example.prog7313poe.ui.expense
 
 import android.os.Bundle
 import android.view.*
@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.prog7313poe.Database.Expenses.AppDatabase
 import com.example.prog7313poe.Database.Expenses.ExpenseData
 import com.example.prog7313poe.databinding.FragmentTransactionsBinding
-import com.example.prog7313poe.ui.expense.AddExpenseDialog
-import com.example.prog7313poe.ui.expense.ExpenseAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,14 +15,14 @@ import kotlinx.coroutines.withContext
 class TransactionsFragment : Fragment() {
 
     private var _binding: FragmentTransactionsBinding? = null
-                private val binding get() = _binding!!
+    private val binding get() = _binding!!
 
-
-            private lateinit var adapter: ExpenseAdapter
+    private lateinit var adapter: ExpenseAdapter
     private val expenseList = mutableListOf<ExpenseData>()
 
     override fun onCreateView(
-             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTransactionsBinding.inflate(inflater, container, false)
         return binding.root
@@ -36,18 +34,17 @@ class TransactionsFragment : Fragment() {
         binding.rvExpenses.adapter = adapter
 
         binding.btnAddExpense.setOnClickListener {
+            // ✅ Show dialog when button clicked
             AddExpenseDialog(requireContext()) { newExpense ->
                 lifecycleScope.launch(Dispatchers.IO) {
-                        AppDatabase.getDatabase(requireContext()).expenseDAO().insertExpense(newExpense)
+                    AppDatabase.getDatabase(requireContext()).expenseDAO().insertExpense(newExpense)
                     loadExpenses()
-                             }
+                }
             }.show()
         }
 
         loadExpenses()
     }
-
-
 
     private fun loadExpenses() {
         lifecycleScope.launch(Dispatchers.IO) {
