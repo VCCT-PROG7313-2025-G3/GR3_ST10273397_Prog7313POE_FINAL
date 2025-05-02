@@ -49,7 +49,7 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 | Name             | Student ID   | Contribution                                        |
 |------------------|--------------|-----------------------------------------------------|
 | Ewald Pagel      | ST10257942   | Basic UI layout, Toolbar/Menu integration, README   |
-| Nicholas         | N/A          | Room DB, login system, GitHub setup, test scripts   |
+| Nicholas         | ST10273397   | Room DB, login system, GitHub setup, test scripts   |
 | Michael Peterson | ST10261925   | Expenses/Budgets functionality                      |
 | Lidvin Megha     | ST10049585   | Filtering logic, exception handling                 |
 
