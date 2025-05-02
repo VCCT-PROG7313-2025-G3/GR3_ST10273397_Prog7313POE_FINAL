@@ -31,33 +31,27 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 
 ## 📂 Project Structure
 
-| Component               | Purpose                                             |
-|-------------------------|-----------------------------------------------------|
-| `MyHomeActivity.kt`     | Main screen shell with toolbar, drawer, and nav     |
-| `HomeFragment.kt`       | Dashboard summary with balances and logo            |
-| `SettingsFragment.kt`   | Dark mode toggle and currency selector              |
-| `AccountDetailsFragment.kt` | Edit/view user info                           |
-| `MyLoginActivity.kt`    | Handles user login                                  |
-| `MyUserRegistrationActivity.kt` | Handles new user registration              |
-| `AppDatabase.kt`        | Room database setup                                 |
-| `UserDAO.kt`            | Interface to manage user data                       |
+| Component                       | Purpose                                             |
+|---------------------------------|-----------------------------------------------------|
+| `MyHomeActivity.kt`             | Main screen shell with toolbar, drawer, and nav     |
+| `HomeFragment.kt`               | Dashboard summary with balances and logo            |
+| `SettingsFragment.kt`           | Dark mode toggle and currency selector              |
+| `AccountDetailsFragment.kt`     | Edit/view user info                                 |
+| `MyLoginActivity.kt`            | Handles user login                                  |
+| `MyUserRegistrationActivity.kt` | Handles new user registration                       |
+| `AppDatabase.kt`                | Room database setup                                 |
+| `UserDAO.kt`                    | Interface to manage user data                       |
 
 ---
 
 ## 👨‍💻 Contributors
 
-| Name             | Student ID   | Contribution                                        |
-|------------------|--------------|-----------------------------------------------------|
-| Ewald Pagel      | ST10257942   | Basic UI layout, Toolbar/Menu integration, README   |
-| Nicholas         | ST10273397   | Room DB, login system, GitHub setup, test scripts   |
-| Michael Peterson | ST10261925   | Expenses/Budgets functionality                      |
-| Lidvin Megha     | ST10049585   | Filtering logic, exception handling                 |
-
----
-
-## 📸 Screenshots
-
-*(To be added: Login page, Home screen, Expense entry, Budget, Settings)*
+| Name               | Student ID   | Contribution                                        |
+|--------------------|--------------|-----------------------------------------------------|
+| Ewald Pagel        | ST10257942   | Basic UI layout, Toolbar/Menu integration, README   |
+| Nicholas Wolfaardt | ST10273397   | Room DB, login system, GitHub setup, test scripts   |
+| Michael Peterson   | ST10261925   | Expenses/Budgets functionality                      |
+| Lidvin Megha       | ST10049585   | Filtering logic                                     |
 
 ---
 
@@ -74,3 +68,8 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 4. Register a new user and start managing expenses
 
 ---
+
+## 📖 References
+
+Programming 3C Module Manual
+OpenAI. 2024. Chat-GPT (Version 3.5). [Large language model]. Available at: https://chat.openai.com/ [Accessed: 2 May 2025]
