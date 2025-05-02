@@ -71,5 +71,6 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 
 ## 📖 References
 
-Programming 3C Module Manual 
+Programming 3C Module Manual
+
 OpenAI. 2024. Chat-GPT (Version 3.5). [Large language model]. Available at: https://chat.openai.com/ [Accessed: 2 May 2025]
