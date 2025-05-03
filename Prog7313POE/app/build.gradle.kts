@@ -59,4 +59,7 @@ dependencies {
     kapt ("androidx.room:room-compiler:2.5.1")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
 
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    kapt ("com.github.bumptech.glide:compiler:4.16.0")
+
 }

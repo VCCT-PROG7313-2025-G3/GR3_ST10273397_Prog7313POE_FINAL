@@ -17,11 +17,12 @@
             android:minHeight="48dp"
             android:hint="Expense Name" />
 
-        <EditText
-            android:id="@+id/et_category"
+        <Spinner
+            android:id="@+id/spn_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
+            android:spinnerMode="dropdown"
             android:hint="Category" />
 
         <EditText
@@ -62,12 +63,19 @@
             android:inputType="textMultiLine"
             android:gravity="top" />
 
-        <EditText
-            android:id="@+id/et_photo_path"
+        <Button
+            android:id="@+id/btn_select_photo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="Photo " />
+            android:text="Select Photo" />
+
+        <ImageView
+            android:id="@+id/iv_selected_photo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="8dp" />
+
 
         <Button
             android:id="@+id/btn_save"

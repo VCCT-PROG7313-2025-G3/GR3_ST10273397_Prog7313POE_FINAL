@@ -2,11 +2,14 @@ package com.example.prog7313poe.ui.budget
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.prog7313poe.Database.Budgets.BudgetData
+import com.example.prog7313poe.Database.Categories.CategoryData
 import com.example.prog7313poe.Database.Budgets.AppDatabase as BudgetDB
 import com.example.prog7313poe.Database.Expenses.AppDatabase as ExpenseDB
 import com.example.prog7313poe.databinding.DialogAddBudgetBinding
@@ -14,6 +17,7 @@ import com.example.prog7313poe.databinding.DialogBudgetSummaryBinding
 import com.example.prog7313poe.databinding.FragmentBudgetBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BudgetFragment : Fragment() {
 
@@ -44,6 +48,10 @@ class BudgetFragment : Fragment() {
                 .replace(com.example.prog7313poe.R.id.fragment_container, com.example.prog7313poe.ui.expense.TransactionsFragment())
                 .addToBackStack(null)
                 .commit()
+        }
+
+        binding.btnGoToCategories.setOnClickListener {
+            showAddCategoryDialog()
         }
 
         loadLatestBudget()
@@ -100,6 +108,41 @@ class BudgetFragment : Fragment() {
                 .show()
         }
     }
+
+    private fun showAddCategoryDialog() {
+        val input = EditText(requireContext()).apply {
+            hint = "Enter new category"
+            setPadding(32, 24, 32, 24)
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Add New Category")
+            .setView(input)
+            .setPositiveButton("Save") { dialog, _ ->
+                val name = input.text.toString().trim()
+                if (name.isNotEmpty()) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val dao = ExpenseDB.getDatabase(requireContext()).categoryDAO()
+                            dao.insertCategory(CategoryData(categoryName = name))
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), "Category added", Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Name cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
 
 
     private fun loadLatestBudget() {
