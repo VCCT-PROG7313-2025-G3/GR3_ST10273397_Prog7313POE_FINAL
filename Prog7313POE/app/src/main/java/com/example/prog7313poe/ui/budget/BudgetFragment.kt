@@ -1,4 +1,4 @@
-package com.example.prog7313poe
+package com.example.prog7313poe.ui.budget
 
 import android.os.Bundle
 import android.view.*
@@ -14,7 +14,6 @@ import com.example.prog7313poe.databinding.DialogBudgetSummaryBinding
 import com.example.prog7313poe.databinding.FragmentBudgetBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class BudgetFragment : Fragment() {
 
@@ -40,6 +39,13 @@ class BudgetFragment : Fragment() {
             showBudgetSummary()
         }
 
+        binding.btnGoToTransactions.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(com.example.prog7313poe.R.id.fragment_container, com.example.prog7313poe.ui.expense.TransactionsFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         loadLatestBudget()
     }
 
@@ -58,7 +64,7 @@ class BudgetFragment : Fragment() {
                         budgetId = 0,
                         budgetName = "Monthly Budget",
                         budgetCategory = "General",
-                        budgetAmount = amount, // ✅ required field
+                        budgetAmount = amount,
                         budgetStartTime = System.currentTimeMillis(),
                         budgetEndTime = System.currentTimeMillis(),
                         budgetDesc = desc
@@ -76,28 +82,25 @@ class BudgetFragment : Fragment() {
     }
 
     private fun showBudgetSummary() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val expenses = ExpenseDB.getDatabase(requireContext()).expenseDAO().getAllExpenses()
-            val totalSpent = expenses.sumOf {
-                it.expenseCategory.toDoubleOrNull() ?: 0.0 // ⚠ placeholder
-            }
-            val remaining = totalBudget - totalSpent
+        val dao = ExpenseDB.getDatabase(requireContext()).expenseDAO()
+        dao.getAllExpenses().observe(viewLifecycleOwner) { expenses ->
+            // now `expenses` is a List<ExpenseData>, so sumOf works
+            val totalSpent = expenses.sumOf { it.expenseAmount }
+            val remaining  = totalBudget - totalSpent
 
-            withContext(Dispatchers.Main) {
-                val dialogBinding = DialogBudgetSummaryBinding.inflate(layoutInflater)
+            val dialogBinding = DialogBudgetSummaryBinding.inflate(layoutInflater)
+            dialogBinding.tvSummaryTotal.text     = "Total Budget: R$totalBudget"
+            dialogBinding.tvSummarySpent.text     = "Spent: R$totalSpent"
+            dialogBinding.tvSummaryRemaining.text = "Remaining: R$remaining"
 
-                dialogBinding.tvSummaryTotal.text = "Total Budget: R$totalBudget"
-                dialogBinding.tvSummarySpent.text = "Spent: R$totalSpent"
-                dialogBinding.tvSummaryRemaining.text = "Remaining: R$remaining"
-
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Budget Summary")
-                    .setView(dialogBinding.root)
-                    .setPositiveButton("Close", null)
-                    .show()
-            }
+            AlertDialog.Builder(requireContext())
+                .setTitle("Budget Summary")
+                .setView(dialogBinding.root)
+                .setPositiveButton("Close", null)
+                .show()
         }
     }
+
 
     private fun loadLatestBudget() {
         lifecycleScope.launch(Dispatchers.IO) {

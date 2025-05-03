@@ -9,7 +9,8 @@ import com.google.android.material.navigation.NavigationView
 import androidx.fragment.app.Fragment
 import android.view.Menu
 import android.view.MenuItem
-import com.example.prog7313poe.ui.expense.TransactionsFragment
+import com.example.prog7313poe.ui.budget.BudgetFragment
+import com.example.prog7313poe.ui.expense.expenseview.ExpenseViewFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -74,7 +75,7 @@ class MyHomeActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_home -> HomeFragment()
-                R.id.nav_transactions -> TransactionsFragment()
+                R.id.nav_transactions -> ExpenseViewFragment()
                 R.id.nav_budget -> BudgetFragment()
                 else -> HomeFragment()
             }

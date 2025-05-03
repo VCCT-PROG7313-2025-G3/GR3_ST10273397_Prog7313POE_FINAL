@@ -26,4 +26,12 @@
         android:layout_height="wrap_content"
         android:text="View Budget Summary"
         android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/btn_go_to_transactions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Transaction"
+        android:layout_marginTop="16dp" />
+
 </LinearLayout>

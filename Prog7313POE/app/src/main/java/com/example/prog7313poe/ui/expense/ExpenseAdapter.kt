@@ -23,8 +23,8 @@ class ExpenseAdapter(private val expenses: List<ExpenseData>) :
 
         holder.binding.tvExpenseName.text = expense.expenseName
         holder.binding.tvExpenseCategory.text = "Category: ${expense.expenseCategory}"
-        holder.binding.tvExpenseTime.text =
-            "From ${expense.expenseStartTime} to ${expense.expenseEndTime}"
+        holder.binding.tvExpenseAmount.text = "Amount: R${expense.expenseAmount}"
+        holder.binding.tvExpenseDate.text = "Date: ${expense.expenseStartTime} to ${expense.expenseEndTime}"
     }
 
     override fun getItemCount(): Int = expenses.size

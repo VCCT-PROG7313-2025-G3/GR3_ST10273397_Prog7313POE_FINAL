@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import com.example.prog7313poe.Database.Expenses.ExpenseData
-import com.example.prog7313poe.R
 import com.example.prog7313poe.databinding.DialogAddExpenseBinding
 
 fun showAddExpenseDialog(
@@ -22,11 +21,13 @@ fun showAddExpenseDialog(
             expenseId = 0,
             expenseName = binding.etName.text.toString(),
             expenseCategory = binding.etCategory.text.toString(),
-            expenseDate = binding.etDate.text.toString().toLongOrNull() ?: System.currentTimeMillis(),
-            expenseStartTime = binding.etStartTime.text.toString().toLongOrNull() ?: 0,
-            expenseEndTime = binding.etEndTime.text.toString().toLongOrNull() ?: 0,
+            expenseAmount = binding.etAmount.text.toString().toDouble(),
+            expenseDate = binding.etDate.text.toString().toLongOrNull()
+                ?: System.currentTimeMillis(),
+            expenseStartTime = (binding.etStartTime.text.toString().toLongOrNull() ?: 0).toString(),
+            expenseEndTime = (binding.etEndTime.text.toString().toLongOrNull() ?: 0).toString(),
             expenseDesc = binding.etDesc.text.toString(),
-            expensePhotoPath = binding.etPhotoPath.text.toString()
+            expensePhotoPath = binding.etPhotoPath.text.toString(),
         )
         onSave(expense)
         dialog.dismiss()

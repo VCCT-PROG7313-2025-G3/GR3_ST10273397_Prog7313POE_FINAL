@@ -1,12 +1,18 @@
 package com.example.prog7313poe.ui.expense
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.prog7313poe.Database.Expenses.AppDatabase
 import com.example.prog7313poe.Database.Expenses.ExpenseData
+import com.example.prog7313poe.R
 import com.example.prog7313poe.databinding.FragmentTransactionsBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,26 +40,69 @@ class TransactionsFragment : Fragment() {
         binding.rvExpenses.adapter = adapter
 
         binding.btnAddExpense.setOnClickListener {
-            // ✅ Show dialog when button clicked
             showAddExpenseDialog(requireContext()) { newExpense ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     AppDatabase.getDatabase(requireContext()).expenseDAO().insertExpense(newExpense)
-                    loadExpenses()
                 }
             }
         }
-        loadExpenses()
+        loadExpenses() //safe to call this ONCE on the main thread (outside the coroutine)
+
+    }
+
+    private fun showAddExpenseDialog(context: Context, onExpenseAdded: (ExpenseData) -> Unit) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_expense, null)
+        val nameInput = dialogView.findViewById<EditText>(R.id.et_name)
+        val categoryInput = dialogView.findViewById<EditText>(R.id.et_category)
+        val amountInput = dialogView.findViewById<EditText>(R.id.et_amount)
+        val startTimeInput = dialogView.findViewById<EditText>(R.id.et_start_time)
+        val endTimeInput = dialogView.findViewById<EditText>(R.id.et_end_time)
+        val descInput = dialogView.findViewById<EditText>(R.id.et_desc)
+        val photoPathInput = dialogView.findViewById<EditText>(R.id.et_photo_path)
+        val btnSave = dialogView.findViewById<Button>(R.id.btn_save)
+
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .create()
+
+        btnSave.setOnClickListener {
+            val name = nameInput.text.toString().trim()
+            val category = categoryInput.text.toString().trim()
+            val amount = amountInput.text.toString().toDoubleOrNull() ?: 0.0
+            val start = startTimeInput.text.toString().trim()
+            val end = endTimeInput.text.toString().trim()
+            val description = descInput.text.toString().trim()
+            val photo = photoPathInput.text.toString().trim()
+
+            if (name.isNotBlank() && category.isNotBlank() && amount > 0) {
+                val expense = ExpenseData(
+                    expenseId = 0, // let Room auto-generate
+                    expenseName = name,
+                    expenseCategory = category,
+                    expenseAmount = amount,
+                    expenseDate = System.currentTimeMillis(), // or a parsed date if needed
+                    expenseStartTime = start,
+                    expenseEndTime = end,
+                    expenseDesc = description,
+                    expensePhotoPath = photo
+                )
+
+                onExpenseAdded(expense)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(context, "Please fill in all required fields.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.show()
     }
 
     private fun loadExpenses() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val dao = AppDatabase.getDatabase(requireContext()).expenseDAO()
-            val expenses = dao.getAllExpenses()
-            withContext(Dispatchers.Main) {
-                expenseList.clear()
-                expenseList.addAll(expenses)
-                adapter.notifyDataSetChanged()
-            }
+        val dao = AppDatabase.getDatabase(requireContext()).expenseDAO()
+        dao.getAllExpenses().observe(viewLifecycleOwner) { expenses ->
+            expenseList.clear()
+            expenseList.addAll(expenses)
+            adapter.notifyDataSetChanged()
         }
     }
 

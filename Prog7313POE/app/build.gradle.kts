@@ -55,12 +55,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // Room components
-    kapt("androidx.room:room-compiler:2.5.1")
-
     implementation ("androidx.room:room-ktx:2.5.1")
     kapt ("androidx.room:room-compiler:2.5.1")
-
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
 
 }

@@ -8,7 +8,7 @@ data class BudgetData(
     @PrimaryKey(autoGenerate = true) val budgetId: Int,
     val budgetName: String,
     val budgetCategory: String,
-    val budgetAmount: Double, // ✅ New field
+    val budgetAmount: Double,
     val budgetStartTime: Long,
     val budgetEndTime: Long,
     val budgetDesc: String
