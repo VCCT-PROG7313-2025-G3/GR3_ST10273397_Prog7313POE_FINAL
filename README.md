@@ -46,22 +46,20 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 
 ## 👨‍💻 Contributors
 
-| Name             | Student ID   | Contribution                                        |
-|------------------|--------------|-----------------------------------------------------|
-| Ewald Pagel      | ST10257942   | Basic UI layout, Toolbar/Menu integration, README   |
-| Nicholas         | ST10273397   | Room DB, login system, GitHub setup, test scripts   |
-| Michael Peterson | ST10261925   | Expenses/Budgets functionality                      |
-| Lidvin Megha     | ST10049585   | Filtering logic, exception handling                 |
-
----
-
-## 📸 Screenshots
-
-*(To be added: Login page, Home screen, Expense entry, Budget, Settings)*
+| Name              | Student ID   | Contribution                                        |
+|-------------------|--------------|-----------------------------------------------------|
+| Nicholas Wolfaardt| ST10273397   | Room DB, login system, GitHub setup, test scripts   |
+| Ewald Pagel       | ST10257942   | Basic UI layout, Toolbar/Menu integration, README   |
+| Michael Peterson  | ST10261925   | Expenses/Budgets functionality                      |
+| Lidvin Megha      | ST10049585   | Filtering logic, exception handling                 |
 
 ---
 
 ## 🎥 Video Demonstration
+
+https://youtu.be/8kVB8duVHlk
+
+Lidvin's Video: https://www.loom.com/share/84a7477d82c341f88a0fe1ec084055e4
 
 
 ---
@@ -74,3 +72,9 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 4. Register a new user and start managing expenses
 
 ---
+
+## 📖 References
+
+Programming 3C Module Manual
+
+OpenAI. 2025. Chat-GPT (Version 3.5). [Large language model]. Available at: https://chat.openai.com/ [Accessed: 02 May 2025].  
