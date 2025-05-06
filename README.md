@@ -73,6 +73,12 @@ Lidvin's Video: https://www.loom.com/share/84a7477d82c341f88a0fe1ec084055e4
 
 ---
 
+## 🔗 GitHub Link:
+
+https://github.com/VCCT-PROG7313-2025-G3/GR3_ST10273397_Prog7313POE_FINAL.git
+
+---
+
 ## 📖 References
 
 Programming 3C Module Manual
