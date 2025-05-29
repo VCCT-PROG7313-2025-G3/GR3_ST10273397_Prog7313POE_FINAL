@@ -16,21 +16,17 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.prog7313poe.Database.Expenses.ExpenseData;
 import com.example.prog7313poe.R;
-import com.example.prog7313poe.ui.expense.expenseview.ExpenseAdapter;
 import com.example.prog7313poe.Database.Expenses.ExpenseViewModel;
 
-import java.util.List;
-
-public class ExpenseViewFragment extends Fragment {
+public class ExpenseFilterFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ExpenseAdapter adapter;
     private EditText filterEditText;
     private ExpenseViewModel expenseViewModel;
 
-    public ExpenseViewFragment() {
+    public ExpenseFilterFragment() {
         // Required empty public constructor
     }
 

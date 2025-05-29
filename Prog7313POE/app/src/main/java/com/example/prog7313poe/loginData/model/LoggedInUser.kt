@@ -1,4 +1,4 @@
-package com.example.prog7313poe.data.model
+package com.example.prog7313poe.loginData.model
 
 import com.example.prog7313poe.Database.users.UserData
 

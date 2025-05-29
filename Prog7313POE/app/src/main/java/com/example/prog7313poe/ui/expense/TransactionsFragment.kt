@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.prog7313poe.Database.Categories.CategoryData
 import com.example.prog7313poe.Database.Expenses.AppDatabase
 import com.example.prog7313poe.Database.Expenses.ExpenseData
 import com.example.prog7313poe.R
@@ -23,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import com.example.prog7313poe.Database.Expenses.AppDatabase as ExpenseDB
 
 class TransactionsFragment : Fragment() {
 
@@ -75,6 +77,14 @@ class TransactionsFragment : Fragment() {
                     AppDatabase.getDatabase(requireContext()).expenseDAO().insertExpense(newExpense)
                 }
             }
+        }
+
+        binding.btnGoToCategories.setOnClickListener {
+            showAddCategoryDialog()
+        }
+
+        binding.btnFilter.setOnClickListener {
+            showFilterFragment()
         }
 
         loadExpenses()
@@ -148,6 +158,40 @@ class TransactionsFragment : Fragment() {
         dialog.show()
     }
 
+    private fun showAddCategoryDialog() {
+        val input = EditText(requireContext()).apply {
+            hint = "Enter new category"
+            setPadding(32, 24, 32, 24)
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Add New Category")
+            .setView(input)
+            .setPositiveButton("Save") { dialog, _ ->
+                val name = input.text.toString().trim()
+                if (name.isNotEmpty()) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val dao = ExpenseDB.getDatabase(requireContext()).categoryDAO()
+                            dao.insertCategory(CategoryData(categoryName = name))
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), "Category added", Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Name cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
     private fun loadExpenses() {
         val dao = AppDatabase.getDatabase(requireContext()).expenseDAO()
         dao.getAllExpenses().observe(viewLifecycleOwner) { expenses ->
@@ -157,8 +201,16 @@ class TransactionsFragment : Fragment() {
         }
     }
 
+    private fun showFilterFragment() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, com.example.prog7313poe.ui.expense.expenseview.ExpenseFilterFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+

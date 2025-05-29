@@ -5,9 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.util.Patterns
-import com.example.prog7313poe.data.LoginRepository
-import com.example.prog7313poe.data.Result
-import com.example.prog7313poe.data.Result.Success
+import com.example.prog7313poe.loginData.LoginRepository
+import com.example.prog7313poe.loginData.Result.Success
 import com.example.prog7313poe.R
 import kotlinx.coroutines.launch
 

@@ -1,6 +1,6 @@
 package com.example.prog7313poe.ui.login
 
-import com.example.prog7313poe.data.model.LoggedInUser
+import com.example.prog7313poe.loginData.model.LoggedInUser
 
 /**
  * User details post authentication that is exposed to the UI

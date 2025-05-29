@@ -43,17 +43,6 @@ class BudgetFragment : Fragment() {
             showBudgetSummary()
         }
 
-        binding.btnGoToTransactions.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(com.example.prog7313poe.R.id.fragment_container, com.example.prog7313poe.ui.expense.TransactionsFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
-        binding.btnGoToCategories.setOnClickListener {
-            showAddCategoryDialog()
-        }
-
         loadLatestBudget()
     }
 
@@ -66,7 +55,6 @@ class BudgetFragment : Fragment() {
             .setPositiveButton("Save") { _, _ ->
                 val amount = dialogBinding.etBudgetAmount.text.toString().toDoubleOrNull()
                 val desc = dialogBinding.etBudgetDesc.text.toString()
-
                 if (amount != null) {
                     val newBudget = BudgetData(
                         budgetId = 0,
@@ -108,42 +96,6 @@ class BudgetFragment : Fragment() {
                 .show()
         }
     }
-
-    private fun showAddCategoryDialog() {
-        val input = EditText(requireContext()).apply {
-            hint = "Enter new category"
-            setPadding(32, 24, 32, 24)
-        }
-
-        AlertDialog.Builder(requireContext())
-            .setTitle("Add New Category")
-            .setView(input)
-            .setPositiveButton("Save") { dialog, _ ->
-                val name = input.text.toString().trim()
-                if (name.isNotEmpty()) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        try {
-                            val dao = ExpenseDB.getDatabase(requireContext()).categoryDAO()
-                            dao.insertCategory(CategoryData(categoryName = name))
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), "Category added", Toast.LENGTH_SHORT).show()
-                            }
-                        } catch (e: Exception) {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Name cannot be empty", Toast.LENGTH_SHORT).show()
-                }
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-
-
 
     private fun loadLatestBudget() {
         lifecycleScope.launch(Dispatchers.IO) {

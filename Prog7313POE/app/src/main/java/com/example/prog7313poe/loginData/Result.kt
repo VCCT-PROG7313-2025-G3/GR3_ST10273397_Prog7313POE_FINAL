@@ -1,4 +1,4 @@
-package com.example.prog7313poe.data
+package com.example.prog7313poe.loginData
 
 /**
  * A generic class that holds a value with its loading status.
