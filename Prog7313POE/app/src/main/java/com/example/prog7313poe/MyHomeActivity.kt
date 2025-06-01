@@ -14,14 +14,7 @@ import com.example.prog7313poe.ui.expense.TransactionsFragment
 import com.example.prog7313poe.ui.expense.expenseview.ExpenseFilterFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-/*
-Add Budget overviews
-Fix Filter
-Fix photos
-Add take a photo
-Then upgrade to Firebase
-Change all descriptors to valid entities
- */
+
 class MyHomeActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout

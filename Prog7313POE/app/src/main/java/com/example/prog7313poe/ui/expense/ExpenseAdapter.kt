@@ -1,5 +1,6 @@
 package com.example.prog7313poe.ui.expense
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,9 +8,13 @@ import com.bumptech.glide.Glide
 import com.example.prog7313poe.Database.Expenses.ExpenseData
 import com.example.prog7313poe.databinding.ItemExpenseBinding
 import java.io.File
+import java.util.Locale
 
-class ExpenseAdapter(private val expenses: List<ExpenseData>) :
+class ExpenseAdapter(private var displayedExpenses: List<ExpenseData> = listOf()) :
     RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder>() {
+
+    private var allExpenses: List<ExpenseData> = listOf()
+
 
     inner class ExpenseViewHolder(val binding: ItemExpenseBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -22,7 +27,9 @@ class ExpenseAdapter(private val expenses: List<ExpenseData>) :
     }
 
     override fun onBindViewHolder(holder: ExpenseViewHolder, position: Int) {
-        val expense = expenses[position]
+        val expense = displayedExpenses[position]
+
+        Log.d("ExpenseAdapter", "Photo path: ${expense.expensePhotoPath}")
 
         holder.binding.tvExpenseName.text = expense.expenseName
         holder.binding.tvExpenseCategory.text = "Category: ${expense.expenseCategory}"
@@ -36,7 +43,26 @@ class ExpenseAdapter(private val expenses: List<ExpenseData>) :
         } else {
             holder.binding.ivExpensePhoto.setImageResource(android.R.drawable.picture_frame)
         }
+
     }
 
-    override fun getItemCount(): Int = expenses.size
+    override fun getItemCount(): Int = displayedExpenses.size
+
+    fun setExpenses(expenses: List<ExpenseData>) {
+        this.allExpenses = expenses
+        this.displayedExpenses = expenses
+        notifyDataSetChanged()
+    }
+
+    fun filter(query: String) {
+        if (query.isBlank()) {
+            displayedExpenses = allExpenses
+        } else {
+            displayedExpenses = allExpenses.filter { expense ->
+                expense.expenseName.contains(query, ignoreCase = true) ||
+                        expense.expenseCategory.contains(query, ignoreCase = true)
+            }
+        }
+        notifyDataSetChanged()
+    }
 }

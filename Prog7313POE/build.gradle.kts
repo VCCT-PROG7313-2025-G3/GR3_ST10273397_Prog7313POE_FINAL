@@ -8,6 +8,7 @@ buildscript {
         // make sure the version matches your kotlin("android") plugin version!
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+        classpath("com.google.gms:google-services:4.4.2")
     }
 }
 

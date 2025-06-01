@@ -11,8 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Budget Tracking"
-        android:textSize="20sp"
-        android:padding="16dp" />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/btn_add_budget"
@@ -24,7 +23,14 @@
         android:id="@+id/btn_budget_summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Budget Summary"
-        android:layout_marginTop="16dp" />
+        android:text="View Budget Summary" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_budgets"
+        android:layout_width="377dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:contentDescription="the list of recorded budgets" />
 
 </LinearLayout>

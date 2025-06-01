@@ -1,18 +1,23 @@
 package com.example.prog7313poe.ui.budget
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.prog7313poe.Database.Budgets.BudgetData
-import com.example.prog7313poe.Database.Categories.CategoryData
+import com.example.prog7313poe.Database.Budgets.AppDatabase
+import com.example.prog7313poe.Database.Budgets.BudgetDAO
+import com.example.prog7313poe.Database.Expenses.ExpenseData
+import com.example.prog7313poe.R
 import com.example.prog7313poe.Database.Budgets.AppDatabase as BudgetDB
 import com.example.prog7313poe.Database.Expenses.AppDatabase as ExpenseDB
-import com.example.prog7313poe.databinding.DialogAddBudgetBinding
 import com.example.prog7313poe.databinding.DialogBudgetSummaryBinding
 import com.example.prog7313poe.databinding.FragmentBudgetBinding
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +28,9 @@ class BudgetFragment : Fragment() {
 
     private var _binding: FragmentBudgetBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var adapter: BudgetAdapter
+    private val budgetList = mutableListOf<BudgetData>()
 
     private var totalBudget: Double = 0.0
 
@@ -35,8 +43,16 @@ class BudgetFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        adapter = BudgetAdapter(budgetList)
+        binding.rvBudgets.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvBudgets.adapter = adapter
+
         binding.btnAddBudget.setOnClickListener {
-            showAddBudgetDialog()
+            showAddBudgetDialog(requireContext()) { newBudget ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    AppDatabase.getDatabase(requireContext()).budgetDAO().insertBudget(newBudget)
+                }
+            }
         }
 
         binding.btnBudgetSummary.setOnClickListener {
@@ -46,35 +62,37 @@ class BudgetFragment : Fragment() {
         loadLatestBudget()
     }
 
-    private fun showAddBudgetDialog() {
-        val dialogBinding = DialogAddBudgetBinding.inflate(layoutInflater)
+    private fun showAddBudgetDialog(context: Context, onBudgetAdded: (BudgetData) -> Unit) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_budget, null)
+        val amountInput = dialogView.findViewById<EditText>(R.id.et_budget_amount)
+        val descInput = dialogView.findViewById<EditText>(R.id.et_budget_desc)
+        val btnSave = dialogView.findViewById<Button>(R.id.btn_Save)
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .create()
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Add Budget")
-            .setView(dialogBinding.root)
-            .setPositiveButton("Save") { _, _ ->
-                val amount = dialogBinding.etBudgetAmount.text.toString().toDoubleOrNull()
-                val desc = dialogBinding.etBudgetDesc.text.toString()
-                if (amount != null) {
-                    val newBudget = BudgetData(
-                        budgetId = 0,
-                        budgetName = "Monthly Budget",
-                        budgetCategory = "General",
-                        budgetAmount = amount,
-                        budgetStartTime = System.currentTimeMillis(),
-                        budgetEndTime = System.currentTimeMillis(),
-                        budgetDesc = desc
-                    )
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        BudgetDB.getDatabase(requireContext()).budgetDAO().insertBudget(newBudget)
-                        loadLatestBudget()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show()
-                }
+        btnSave.setOnClickListener {
+            val amount = amountInput.text.toString().toDoubleOrNull() ?: 0.0
+            val description = descInput.text.toString().trim()
+
+            if (amount > 0) {
+                val budget = BudgetData(
+                    budgetId = 0,
+                    budgetName = "",
+                    budgetCategory = "",
+                    budgetAmount = amount,
+                    budgetStartTime = 0,
+                    budgetEndTime = 0,
+                    budgetDesc = description
+                )
+                onBudgetAdded(budget)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(context, "Please fill in all required fields.", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
+
+        dialog.show()
     }
 
     private fun showBudgetSummary() {
@@ -98,11 +116,21 @@ class BudgetFragment : Fragment() {
     }
 
     private fun loadLatestBudget() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val budgets = BudgetDB.getDatabase(requireContext()).budgetDAO().getAllBudgets()
-            totalBudget = budgets.lastOrNull()?.budgetAmount ?: 0.0
+        val dao = AppDatabase.getDatabase(requireContext()).budgetDAO()
+
+        lifecycleScope.launch {
+            // Switch to IO thread for the DB query
+            val budgets = withContext(Dispatchers.IO) {
+                dao.getAllBudgets()
+            }
+
+            // Now safely update UI on the Main thread
+            budgetList.clear()
+            budgetList.addAll(budgets)
+            adapter.notifyDataSetChanged()
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

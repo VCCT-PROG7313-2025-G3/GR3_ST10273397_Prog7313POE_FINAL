@@ -21,4 +21,10 @@
         android:padding="12dp"
         android:hint="Description (optional)"
         android:inputType="text" />
+
+    <Button
+        android:id="@+id/btn_Save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save" />
 </LinearLayout>

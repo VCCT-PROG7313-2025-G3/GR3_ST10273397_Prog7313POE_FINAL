@@ -30,7 +30,7 @@ class AccountDetailsFragment : Fragment() {
         val fullNameEdit = view.findViewById<EditText>(R.id.edit_fullname)
         val emailEdit = view.findViewById<EditText>(R.id.edit_email)
         val btnEdit = view.findViewById<Button>(R.id.btn_edit)
-        val btnSave = view.findViewById<Button>(R.id.btn_save)
+        val btnSave = view.findViewById<Button>(R.id.btn_Save)
 
         val db = AppDatabase.getDatabase(requireContext())
         val userEmail = CurrentUser.email

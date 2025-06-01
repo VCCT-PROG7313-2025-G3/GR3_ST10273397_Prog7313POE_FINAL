@@ -16,8 +16,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.prog7313poe.Database.Expenses.ExpenseData;
 import com.example.prog7313poe.R;
 import com.example.prog7313poe.Database.Expenses.ExpenseViewModel;
+import com.example.prog7313poe.ui.expense.ExpenseAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExpenseFilterFragment extends Fragment {
 
@@ -25,6 +30,7 @@ public class ExpenseFilterFragment extends Fragment {
     private ExpenseAdapter adapter;
     private EditText filterEditText;
     private ExpenseViewModel expenseViewModel;
+    private List<ExpenseData> expenseList = new ArrayList<>();
 
     public ExpenseFilterFragment() {
         // Required empty public constructor
@@ -57,7 +63,7 @@ public class ExpenseFilterFragment extends Fragment {
         filterEditText = view.findViewById(R.id.et_filter);
 
         // Set up RecyclerView + adapter
-        adapter = new ExpenseAdapter();
+        adapter = new ExpenseAdapter(expenseList);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
 

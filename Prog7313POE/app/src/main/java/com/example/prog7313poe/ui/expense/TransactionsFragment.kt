@@ -1,7 +1,11 @@
 package com.example.prog7313poe.ui.expense
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -12,9 +16,11 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.prog7313poe.Database.Categories.CategoryData
 import com.example.prog7313poe.Database.Expenses.AppDatabase
 import com.example.prog7313poe.Database.Expenses.ExpenseData
@@ -34,6 +40,9 @@ class TransactionsFragment : Fragment() {
     private lateinit var adapter: ExpenseAdapter
     private val expenseList = mutableListOf<ExpenseData>()
 
+    private var cameraImageUri: Uri? = null
+    private var cameraImageFile: File? = null
+    private lateinit var cameraLauncher: ActivityResultLauncher<Uri>
     private var selectedImagePath: String? = null
     private lateinit var getImage: ActivityResultLauncher<String>
     private var tempImageView: ImageView? = null
@@ -52,7 +61,28 @@ class TransactionsFragment : Fragment() {
                     }
                 }
                 selectedImagePath = file.absolutePath
-                tempImageView?.setImageURI(uri) // Need a way to update imageView
+                tempImageView?.post { tempImageView?.setImageURI(uri) }
+            }
+        }
+
+        cameraLauncher = registerForActivityResult(
+            ActivityResultContracts.TakePicture()
+        ) { success: Boolean ->
+            if (success) {
+                cameraImageFile?.let { file ->
+                    if (file.exists()) {
+                        selectedImagePath = file.absolutePath
+                        tempImageView?.post {
+                            Glide.with(requireContext())
+                                .load(file)
+                                .into(tempImageView!!)
+                        }
+                    } else {
+                        Log.w("TransactionsFragment", "Camera wrote no file at ${file.path}")
+                    }
+                } ?: Log.w("TransactionsFragment", "cameraImageFile was null")
+            } else {
+                Log.w("TransactionsFragment", "User cancelled full-res camera capture")
             }
         }
     }
@@ -91,6 +121,7 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun showAddExpenseDialog(context: Context, onExpenseAdded: (ExpenseData) -> Unit) {
+        selectedImagePath = null
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_expense, null)
         val nameInput = dialogView.findViewById<EditText>(R.id.et_name)
         val categorySpinner = dialogView.findViewById<Spinner>(R.id.spn_category)
@@ -99,10 +130,8 @@ class TransactionsFragment : Fragment() {
         val endTimeInput = dialogView.findViewById<EditText>(R.id.et_end_time)
         val descInput = dialogView.findViewById<EditText>(R.id.et_desc)
         val btnSelectPhoto = dialogView.findViewById<Button>(R.id.btn_select_photo)
-        val imageView = dialogView.findViewById<ImageView>(R.id.iv_selected_photo)
+        val btnTakePhoto = dialogView.findViewById<Button>(R.id.btn_take_photo)
         val btnSave = dialogView.findViewById<Button>(R.id.btn_save)
-
-        var selectedImagePath: String? = null
 
         tempImageView = dialogView.findViewById(R.id.iv_selected_photo)
 
@@ -124,6 +153,24 @@ class TransactionsFragment : Fragment() {
 
         btnSelectPhoto.setOnClickListener {
             getImage.launch("image/*")
+        }
+
+        btnTakePhoto.setOnClickListener {
+            val context = requireContext()
+            val imagesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val newFile = File(imagesDir, "${System.currentTimeMillis()}.jpg")
+
+            cameraImageFile = newFile
+
+            cameraImageUri = FileProvider.getUriForFile(
+                context,
+                "com.example.prog7313poe.fileprovider",
+                newFile
+            )
+
+            cameraImageUri?.let { uri ->
+                cameraLauncher.launch(uri)
+            }
         }
 
         btnSave.setOnClickListener {

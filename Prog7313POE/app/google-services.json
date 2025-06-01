@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "165670508648",
+    "firebase_url": "https://thriftsense-b5584-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "thriftsense-b5584",
+    "storage_bucket": "thriftsense-b5584.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165670508648:android:e3c3830d24c55a04f183dd",
+        "android_client_info": {
+          "package_name": "com.example.prog7313poe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_41LwJD_b7HiFHA5BQNOZ2CuGY3HGo4k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
