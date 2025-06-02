@@ -29,30 +29,18 @@
             android:id="@+id/et_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="Amount" />
-            android:inputType="numberDecimal" />
+            android:hint="Amount"
+            android:inputType="number|numberDecimal"
+            android:minHeight="48dp" />
 
         <EditText
             android:id="@+id/et_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="Date" />
+            android:hint="Date"
+            android:inputType="datetime|date"
+            android:minHeight="48dp" />
 
-        <EditText
-            android:id="@+id/et_start_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="Start Time" />
-
-        <EditText
-            android:id="@+id/et_end_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="End Time" />
 
         <EditText
             android:id="@+id/et_desc"

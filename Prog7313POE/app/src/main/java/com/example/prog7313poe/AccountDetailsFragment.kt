@@ -8,12 +8,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import com.example.prog7313poe.Database.users.AppDatabase
+import com.example.prog7313poe.Database.users.FirebaseUserDbHelper
 import com.example.prog7313poe.Database.users.UserData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AccountDetailsFragment : Fragment() {
 
@@ -32,13 +28,10 @@ class AccountDetailsFragment : Fragment() {
         val btnEdit = view.findViewById<Button>(R.id.btn_edit)
         val btnSave = view.findViewById<Button>(R.id.btn_Save)
 
-        val db = AppDatabase.getDatabase(requireContext())
         val userEmail = CurrentUser.email
 
-        lifecycleScope.launch {
-            val user = withContext(Dispatchers.IO) {
-                db.userDAO().getUserByEmail(userEmail)
-            }
+        FirebaseUserDbHelper.getAllUsers { users ->
+            val user = users.find { it.email == userEmail }
 
             user?.let {
                 fullNameEdit.setText("${it.firstName} ${it.lastName}")
@@ -71,20 +64,19 @@ class AccountDetailsFragment : Fragment() {
                     )
 
 
-                    // Update in background
-                    lifecycleScope.launch {
-                        withContext(Dispatchers.IO) {
-                            db.userDAO().updateUser(updatedUser)
+                    FirebaseUserDbHelper.deleteAllUsers {
+                        FirebaseUserDbHelper.insertUser(updatedUser) {
+                            CurrentUser.email = updatedEmail
+                            Toast.makeText(requireContext(), "User updated.", Toast.LENGTH_SHORT)
+                                .show()
+                            fullNameEdit.isEnabled = false
+                            emailEdit.isEnabled = false
+                            btnSave.visibility = View.GONE
                         }
-
-                        // Update local state and UI on main thread
-                        CurrentUser.email = updatedEmail
-                        Toast.makeText(requireContext(), "User updated.", Toast.LENGTH_SHORT).show()
-                        fullNameEdit.isEnabled = false
-                        emailEdit.isEnabled = false
-                        btnSave.visibility = View.GONE
                     }
                 }
+            } ?: run {
+                Toast.makeText(requireContext(), "User not found.", Toast.LENGTH_SHORT).show()
             }
         }
     }

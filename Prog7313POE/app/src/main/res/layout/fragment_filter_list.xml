@@ -1,51 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_filter_list_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- 1) CATEGORY SPINNER -->
+    <Spinner
+        android:id="@+id/spn_category_filter"
+        android:layout_width="match_parent"
+        android:layout_height="48dp" />
+
+    <!-- 2) DATE RANGE: two EditTexts side by side -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp">
+
+        <!-- Start Date -->
+        <EditText
+            android:id="@+id/et_start_date_filter"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:hint="Start Date"
+            android:inputType="none" />
+
+        <!-- Small gap -->
+        <View
+            android:layout_width="12dp"
+            android:layout_height="match_parent" />
+
+        <!-- End Date -->
+        <EditText
+            android:id="@+id/et_end_date_filter"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:hint="End Date"
+            android:inputType="none" />
+    </LinearLayout>
+
+    <!-- 3) KEYWORD FILTER -->
     <EditText
         android:id="@+id/et_filter"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Filter by category or keyword"
+        android:layout_height="48dp"
+        android:layout_marginBottom="12dp"
+        android:hint="Filter by keyword"
         android:inputType="text"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="18sp" />
 
+    <!-- 4) EXPENSE LIST -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_category_keyword"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-    <TextView
-        android:id="@+id/tv_category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Category"
-        android:textAlignment="center"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/tv_amount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Amount"
-        android:textAlignment="center"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/tv_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Date"
-        android:textAlignment="center"
-        android:textSize="18sp" />
+        />
 
 </LinearLayout>

@@ -30,9 +30,16 @@ class LoginRepository(
         return withContext(Dispatchers.IO) {
             val result = dataSource.login(username, password)
             if (result is Result.Success) {
-                setLoggedInUser(result.data)
+                val userData = result.data
+                val loggedInUser = LoggedInUser(
+                    userId = userData.email,
+                    displayName = "${userData.firstName} ${userData.lastName}"
+                )
+                setLoggedInUser(loggedInUser)
+                Result.Success(loggedInUser)
+            } else {
+                result as Result.Error
             }
-            result
         }
     }
 

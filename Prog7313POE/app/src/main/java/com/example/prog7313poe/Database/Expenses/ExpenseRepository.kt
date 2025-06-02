@@ -1,24 +1,31 @@
 package com.example.prog7313poe.Database.Expenses
 
-import android.app.Application
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.MutableLiveData
 
-class ExpenseRepository(application: Application) {
+class ExpenseRepository {
 
-    private val expenseDAO: ExpenseDAO = AppDatabase.getDatabase(application).expenseDAO()
-    val allExpenses: LiveData<List<ExpenseData>> = expenseDAO.getAllExpenses()
+    private val _expensesLiveData = MutableLiveData<List<ExpenseData>>()
+    val expensesLiveData: LiveData<List<ExpenseData>> get() = _expensesLiveData
 
-    suspend fun insert(expenseData: ExpenseData) {
-        withContext(Dispatchers.IO) {
-            expenseDAO.insertExpense(expenseData)
+    fun insert(expense: ExpenseData, onComplete: () -> Unit = {}) {
+        FirebaseExpenseDbHelper.insertExpenses(expense) {
+            // Optionally refresh the list after insert
+            getAllExpenses()
+            onComplete()
         }
     }
 
-    suspend fun delete(expenseData: ExpenseData) {
-        withContext(Dispatchers.IO) {
-            expenseDAO.deleteExpense(expenseData)
+    fun getAllExpenses() {
+        FirebaseExpenseDbHelper.getAllExpenses { expenses ->
+            _expensesLiveData.postValue(expenses)
+        }
+    }
+
+    fun deleteAllExpenses(onComplete: () -> Unit = {}) {
+        FirebaseExpenseDbHelper.deleteAllExpenses {
+            getAllExpenses()
+            onComplete()
         }
     }
 }

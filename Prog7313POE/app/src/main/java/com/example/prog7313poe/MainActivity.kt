@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.prog7313poe.ui.login.MyLoginActivity
+import com.google.firebase.FirebaseApp
 
 //Main activity class for the app
 class MainActivity : AppCompatActivity() {
@@ -19,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     //onCreate method, called when the activity is created
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FirebaseApp.initializeApp(this)
 
         //Enables edge-to-edge display, removing the default margins/padding from system UI elements (like status bar)
         enableEdgeToEdge()

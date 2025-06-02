@@ -3,7 +3,6 @@ package com.example.prog7313poe.ui.login
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.prog7313poe.Database.users.AppDatabase
 import com.example.prog7313poe.loginData.LoginDataSource
 import com.example.prog7313poe.loginData.LoginRepository
 
@@ -17,10 +16,8 @@ class LoginViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            // Obtain UserDAO from Room database
-            val userDAO = AppDatabase.getDatabase(context).userDAO()
-            // Create DataSource and Repository
-            val dataSource = LoginDataSource(userDAO)
+            // FirebaseAuth-based LoginDataSource takes no DAO
+            val dataSource = LoginDataSource()
             val repository = LoginRepository(dataSource)
             return LoginViewModel(loginRepository = repository) as T
         }

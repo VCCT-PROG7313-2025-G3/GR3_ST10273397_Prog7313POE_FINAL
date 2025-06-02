@@ -4,129 +4,140 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.prog7313poe.Database.users.AppDatabase
-import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
-import com.example.prog7313poe.Database.users.UserDAO
-import com.example.prog7313poe.Database.users.UserData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.google.firebase.database.*
 
 //Activity for user registration
 class MyUserRegistrationActivity : AppCompatActivity() {
 
-    //Declare inpuit fields and buttons for the registration form
-    lateinit var userFirstName: EditText
-    lateinit var userLastName: EditText
-    lateinit var userEmail: EditText
-    lateinit var userPassword: EditText
-    lateinit var userConfirmPassword: EditText
-    lateinit var btnConfirm: Button
-    lateinit var btnCancel: Button
+    // Input fields and buttons
+    private lateinit var userFirstName: EditText
+    private lateinit var userLastName: EditText
+    private lateinit var userEmail: EditText
+    private lateinit var userPassword: EditText
+    private lateinit var userConfirmPassword: EditText
+    private lateinit var btnConfirm: Button
+    private lateinit var btnCancel: Button
 
-    //Declare userDAO to interact with the database
-    lateinit var userDAO: UserDAO
+    // Reference to "/users" node in Realtime DB
+    private val usersRef: DatabaseReference by lazy {
+        FirebaseDatabase
+            .getInstance("https://thriftsense-b5584-default-rtdb.europe-west1.firebasedatabase.app/")
+            .getReference("users")
+    }
 
-    //onCreate method for the activity lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Enable edge-to-edge display for a full-screen experience
         enableEdgeToEdge()
-
-        // Set the content view to the registration layout
         setContentView(R.layout.activity_my_user_registration)
 
-        // Find views by their IDs from the layout
-        userFirstName = findViewById<EditText>(R.id.etxt_firstname)
-        userLastName = findViewById<EditText>(R.id.etxt_lastname)
-        userEmail = findViewById<EditText>(R.id.etxt_email)
-        userPassword = findViewById<EditText>(R.id.etxt_password)
-        userConfirmPassword = findViewById<EditText>(R.id.etxt_confirmpassword)
-        btnConfirm = findViewById<Button>(R.id.btn_confirm)
-        btnCancel = findViewById<Button>(R.id.btn_cancel)
+        userFirstName = findViewById(R.id.etxt_firstname)
+        userLastName = findViewById(R.id.etxt_lastname)
+        userEmail = findViewById(R.id.etxt_email)
+        userPassword = findViewById(R.id.etxt_password)
+        userConfirmPassword = findViewById(R.id.etxt_confirmpassword)
+        btnConfirm = findViewById(R.id.btn_confirm)
+        btnCancel = findViewById(R.id.btn_cancel)
 
-        // Initialize the database and DAO to interact with user data
-        val db = AppDatabase.getDatabase(this)
-        userDAO = db.userDAO()
-
-        // Apply window insets to adjust layout for system bars (e.g., status bar)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Set click listeners for the confirm and cancel buttons
         btnConfirm.setOnClickListener { btnConfirmClick() }
         btnCancel.setOnClickListener { btnCancelClick() }
     }
 
-    // Action for the Cancel button to return to the MainActivity
     private fun btnCancelClick() {
-        val intent = Intent(this, MainActivity()::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, MainActivity::class.java))
     }
 
-    // Action for the Confirm button to handle user registration logic
     private fun btnConfirmClick() {
-        // Launch the registration logic inside a coroutine to handle background tasks
-        lifecycleScope.launch {
-            // Get the email entered by the user
-            val emailText = userEmail.text.toString()
-            // Check if a user with the same email already exists in the database
-            val existingUser = withContext(Dispatchers.IO) {
-                userDAO.getUserByEmail(emailText)
-            }
+        val email = userEmail.text.toString().trim()
+        val firstName = userFirstName.text.toString().trim()
+        val lastName = userLastName.text.toString().trim()
+        val password = userPassword.text.toString()
+        val confirmPassword = userConfirmPassword.text.toString()
 
-            // If user already exists, show a toast message and stop further execution
-            if (existingUser != null) {
-                Toast.makeText(this@MyUserRegistrationActivity,
-                    "This user already exists!", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-
-            // If passwords don't match, show a toast message and stop further execution
-            if (!PasswordMatch()) {
-                Toast.makeText(this@MyUserRegistrationActivity,
-                    "Passwords don't match!", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-
-            // Only reaches here if both checks pass
-            val newUser = UserData(
-                email     = emailText,
-                firstName = userFirstName.text.toString(),
-                lastName  = userLastName.text.toString(),
-                password  = userPassword.text.toString()
-            )
-
-            // Insert the new user into the database in the background (IO thread)
-            withContext(Dispatchers.IO) {
-                userDAO.insertUser(newUser)
-            }
-
-            // Show a success message once registration is complete
-            Toast.makeText(this@MyUserRegistrationActivity,
-                "You have successfully registered!", Toast.LENGTH_SHORT).show()
-
-            // Navigate to the home activity after successful registration
-            val intent = Intent(this@MyUserRegistrationActivity, MyHomeActivity::class.java)
-            intent.putExtra("email", emailText)  // Pass email to the next activity
-            startActivity(intent)
-
+        // 1) Basic validation
+        if (firstName.isBlank() || lastName.isBlank() || email.isBlank() ||
+            password.isBlank() || confirmPassword.isBlank()
+        ) {
+            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
+            return
         }
+        if (password != confirmPassword) {
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 2) Check if email is already registered
+        val query = usersRef.orderByChild("email").equalTo(email)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    // That email already exists
+                    Toast.makeText(
+                        this@MyUserRegistrationActivity,
+                        "User with that email already exists",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    // 3) Create a UserData map and save under "/users/{encodedEmail}"
+                    val safeKey = encodeEmailAsKey(email)
+                    val newUser = mapOf<String, Any>(
+                        "email" to email,
+                        "firstName" to firstName,
+                        "lastName" to lastName,
+                        "password" to password          // store raw password
+                    )
+
+                    usersRef.child(safeKey).setValue(newUser)
+                        .addOnSuccessListener {
+                            Toast.makeText(
+                                this@MyUserRegistrationActivity,
+                                "Registration successful!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            // 4) Save “logged-in” flag in SharedPreferences if desired
+                            val prefs = getSharedPreferences("MY_APP_PREFS", MODE_PRIVATE)
+                            prefs.edit().putString("CURRENT_USER_EMAIL", email).apply()
+
+                            // 5) Navigate to home screen
+                            val intent = Intent(this@MyUserRegistrationActivity, MyHomeActivity::class.java)
+                            intent.putExtra("email", email)
+                            startActivity(intent)
+                        }
+                        .addOnFailureListener { ex ->
+                            Toast.makeText(
+                                this@MyUserRegistrationActivity,
+                                "Error saving user: ${ex.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(
+                    this@MyUserRegistrationActivity,
+                    "Error checking user: ${error.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        })
     }
 
-    // Function to check if the entered passwords match
-    private fun PasswordMatch(): Boolean {
-        // Compare password and confirm password fields
-        return userPassword.text.toString() == userConfirmPassword.text.toString()
+    // Turn an email into a safe Firebase key (no '.' or '@')
+    private fun encodeEmailAsKey(email: String): String {
+        return email.replace(".", "_")
+            .replace("@", "_")
     }
 }
 

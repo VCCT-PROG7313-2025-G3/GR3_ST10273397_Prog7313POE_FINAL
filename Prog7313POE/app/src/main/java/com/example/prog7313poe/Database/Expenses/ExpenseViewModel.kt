@@ -1,27 +1,23 @@
 package com.example.prog7313poe.Database.Expenses
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import androidx.lifecycle.ViewModel
 
-class ExpenseViewModel(application: Application) : AndroidViewModel(application) {
-    private val expenseDAO: ExpenseDAO = AppDatabase.getDatabase(application).expenseDAO()
-    val allExpenses: LiveData<List<ExpenseData>> = expenseDAO.getAllExpenses()
+class ExpenseViewModel : ViewModel() {
 
-    fun insert(expenses: ExpenseData) {
-        viewModelScope.launch(Dispatchers.IO) {
-            expenseDAO.insertExpense(expenses)
-        }
+    private val repository = ExpenseRepository()
+    val allExpenses: LiveData<List<ExpenseData>> = repository.expensesLiveData
+
+    init {
+        // Load data when ViewModel is created
+        repository.getAllExpenses()
     }
 
-    fun delete(expenses: ExpenseData) {
-        GlobalScope.launch(Dispatchers.IO) {
-            expenseDAO.deleteExpense(expenses)
-        }
+    fun insertExpense(expense: ExpenseData, onComplete: () -> Unit = {}) {
+        repository.insert(expense, onComplete)
+    }
+
+    fun deleteAllExpenses(onComplete: () -> Unit = {}) {
+        repository.deleteAllExpenses(onComplete)
     }
 }
-

@@ -1,41 +1,67 @@
 package com.example.prog7313poe.loginData
 
-import com.example.prog7313poe.loginData.model.LoggedInUser
-import com.example.prog7313poe.Database.users.UserDAO
+import com.example.prog7313poe.Database.users.UserData
+import com.google.firebase.database.*
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.IOException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information from Room.
  */
-class LoginDataSource(
-    private val userDAO: UserDAO
-) {
+class LoginDataSource {
+
+    private val usersRef: DatabaseReference by lazy {
+        FirebaseDatabase
+            .getInstance("https://thriftsense-b5584-default-rtdb.europe-west1.firebasedatabase.app/")
+            .getReference("users")
+    }
 
     /**
-     * Validates credentials against stored users.
-     * @throws IOException on auth failure or errors.
+     * Attempts to log in with a plain-text password (no hashing).
+     * @throws IOException on failure (user not found / wrong password / DB error).
      */
-    suspend fun login(username: String, password: String): Result<LoggedInUser> {
+    suspend fun login(email: String, password: String): Result<UserData> {
         return try {
-            val user = userDAO.getUserByEmail(username)
-            when {
-                user == null -> {
-                    Result.Error(IOException("User not found"))
-                }
-                user.password != password -> {
+            // 1) Query Realtime DB for any user node where "email" == email
+            val userList: List<UserData> = suspendCancellableCoroutine { cont ->
+                val query = usersRef.orderByChild("email").equalTo(email)
+                query.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val foundUsers = mutableListOf<UserData>()
+                        for (childSnap in snapshot.children) {
+                            childSnap.getValue(UserData::class.java)?.let { u ->
+                                foundUsers.add(u)
+                            }
+                        }
+                        cont.resume(foundUsers)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        cont.resumeWithException(IOException("DB error: ${error.message}"))
+                    }
+                })
+            }
+
+            // 2) If no user, return Error
+            if (userList.isEmpty()) {
+                Result.Error(IOException("User not found"))
+            } else {
+                // 3) There should only be one matching user
+                val user = userList.first()
+                return if (user.password == password) {
+                    Result.Success(user)
+                } else {
                     Result.Error(IOException("Invalid credentials"))
-                }
-                else -> {
-                    val loggedIn = LoggedInUser.fromUserData(user)
-                    Result.Success(loggedIn)
                 }
             }
         } catch (e: Exception) {
-            Result.Error(IOException("Error logging in", e))
+            Result.Error(IOException("Login error", e))
         }
     }
 
     fun logout() {
-        // TODO: revoke authentication, clear session if needed
+        // Clear your own session state (e.g. SharedPreferences entry)
     }
 }
