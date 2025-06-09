@@ -99,8 +99,20 @@ class BudgetFragment : Fragment() {
         val endDateInput = dialogView.findViewById<EditText>(R.id.et_end_time)
         val btnSave = dialogView.findViewById<Button>(R.id.btn_save)
 
-        startDateInput.inputType = InputType.TYPE_NULL
-        endDateInput.inputType = InputType.TYPE_NULL
+        startDateInput.apply {
+            showSoftInputOnFocus = false
+            inputType = InputType.TYPE_NULL
+            isFocusable = false
+            isCursorVisible = false
+            isClickable = true
+        }
+        endDateInput.apply {
+            showSoftInputOnFocus = false
+            inputType = InputType.TYPE_NULL
+            isFocusable = false
+            isCursorVisible = false
+            isClickable = true
+        }
 
         // ========== 1) Load categories into the Spinner ==========
         // This reads every child under “categories” in your Realtime DB,
