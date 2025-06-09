@@ -59,6 +59,7 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 
 https://youtu.be/qJldq-LnXPo?si=jeNHzLzMr2VkEjMx
 
+https://youtube.com/shorts/qJldq-LnXPo?si=REJvdGqAqTK2CbkB
 ---
 
 ## 🚀 How to Run
