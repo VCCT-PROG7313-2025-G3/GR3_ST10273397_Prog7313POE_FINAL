@@ -13,9 +13,9 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 - 🧮 Create budgets with category-specific monthly limits and goals
 - 📆 Filter expenses by date ranges
 - 🌓 Toggle dark mode via the settings
-- 🔄 Switch user and logout functionality
+- 🔄 Multiple accounts in one, user and logout functionality
 - 🧭 Navigation drawer and bottom navigation bar
-- 💾 Data stored locally using Room Database
+- 💾 Data stored using Firebase
 
 ---
 
