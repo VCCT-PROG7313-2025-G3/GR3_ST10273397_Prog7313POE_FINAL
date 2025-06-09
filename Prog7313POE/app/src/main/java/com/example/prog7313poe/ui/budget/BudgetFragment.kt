@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.prog7313poe.Database.Budgets.BudgetData
 import com.example.prog7313poe.Database.Budgets.FirebaseBudgetDbHelper
+import com.example.prog7313poe.Database.Expenses.ExpenseData
 import com.example.prog7313poe.Database.Expenses.FirebaseExpenseDbHelper
 import com.example.prog7313poe.R
 import com.example.prog7313poe.databinding.DialogBudgetSummaryBinding
@@ -32,6 +33,7 @@ class BudgetFragment : Fragment() {
 
     private lateinit var adapter: BudgetAdapter
     private val budgetList = mutableListOf<BudgetData>()
+    private val expenseList = mutableListOf<ExpenseData>()
 
     private var totalBudget: Double = 0.0
 
@@ -51,21 +53,25 @@ class BudgetFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = BudgetAdapter(budgetList)
+        adapter = BudgetAdapter()
         binding.rvBudgets.layoutManager = LinearLayoutManager(requireContext())
         binding.rvBudgets.adapter = adapter
+
+        adapter.setBudgets(budgetList)
+        adapter.setExpenses(expenseList)
 
         binding.btnAddBudget.setOnClickListener {
             showAddBudgetDialog(requireContext()) { newBudget ->
                 FirebaseBudgetDbHelper.insertBudget(
                     budgetName = newBudget.budgetName,
                     budgetCategory = newBudget.budgetCategory,
-                    budgetAmount = newBudget.budgetAmount,
+                    budgetMinAmount = newBudget.budgetMinAmount,
+                    budgetMaxAmount = newBudget.budgetMaxAmount,
                     budgetStartTime = newBudget.budgetStartTime,
                     budgetEndTime = newBudget.budgetEndTime,
                     budgetDesc = newBudget.budgetDesc
                 ) {
-                    loadLatestBudget()
+                    loadLatestBudgetAndExpense()
                 }
             }
         }
@@ -74,7 +80,7 @@ class BudgetFragment : Fragment() {
             showBudgetSummary()
         }
 
-        loadLatestBudget()
+        loadLatestBudgetAndExpense()
     }
 
     private fun showAddBudgetDialog(
@@ -84,7 +90,8 @@ class BudgetFragment : Fragment() {
         val dialogView = LayoutInflater.from(context)
             .inflate(R.layout.dialog_add_budget, null)
 
-        val amountInput = dialogView.findViewById<EditText>(R.id.et_amount)
+        val minAmountInput = dialogView.findViewById<EditText>(R.id.et_min_amount)
+        val maxAmountInput = dialogView.findViewById<EditText>(R.id.et_max_amount)
         val descInput = dialogView.findViewById<EditText>(R.id.et_desc)
         val nameInput = dialogView.findViewById<EditText>(R.id.et_name)
         val categoryInput = dialogView.findViewById<Spinner>(R.id.spn_category)
@@ -92,8 +99,20 @@ class BudgetFragment : Fragment() {
         val endDateInput = dialogView.findViewById<EditText>(R.id.et_end_time)
         val btnSave = dialogView.findViewById<Button>(R.id.btn_save)
 
-        startDateInput.inputType = InputType.TYPE_NULL
-        endDateInput.inputType = InputType.TYPE_NULL
+        startDateInput.apply {
+            showSoftInputOnFocus = false
+            inputType = InputType.TYPE_NULL
+            isFocusable = false
+            isCursorVisible = false
+            isClickable = true
+        }
+        endDateInput.apply {
+            showSoftInputOnFocus = false
+            inputType = InputType.TYPE_NULL
+            isFocusable = false
+            isCursorVisible = false
+            isClickable = true
+        }
 
         // ========== 1) Load categories into the Spinner ==========
         // This reads every child under “categories” in your Realtime DB,
@@ -167,12 +186,13 @@ class BudgetFragment : Fragment() {
         btnSave.setOnClickListener {
             val name = nameInput.text.toString().trim()
             val category = categoryInput.selectedItem.toString().trim()
-            val amount = amountInput.text.toString().toDoubleOrNull() ?: 0.0
+            val minAmount = minAmountInput.text.toString().toDoubleOrNull() ?: 0.0
+            val maxAmount = maxAmountInput.text.toString().toDoubleOrNull() ?: 0.0
             val startStr = startDateInput.text.toString().trim()
             val endStr = endDateInput.text.toString().trim()
             val description = descInput.text.toString().trim()
 
-            if (name.isBlank() || category.isBlank() || category == "Select category" || amount <= 0.0 || startStr.isBlank() || endStr.isBlank()) {
+            if (name.isBlank() || category.isBlank() || category == "Select category" || maxAmount <= 0.0 || startStr.isBlank() || endStr.isBlank()) {
                 Toast.makeText(
                     context,
                     "Please enter name, positive amount, and both start/end dates.",
@@ -209,7 +229,8 @@ class BudgetFragment : Fragment() {
                 budgetId = "",
                 budgetName = name,
                 budgetCategory = category,
-                budgetAmount = amount,
+                budgetMinAmount = minAmount,
+                budgetMaxAmount = maxAmount,
                 budgetStartTime = startMillis,
                 budgetEndTime = endMillis,
                 budgetDesc = description
@@ -223,7 +244,7 @@ class BudgetFragment : Fragment() {
     }
 
     private fun showBudgetSummary() {
-        totalBudget = budgetList.sumOf { it.budgetAmount }
+        totalBudget = budgetList.sumOf { it.budgetMaxAmount }
 
         FirebaseExpenseDbHelper.getAllExpenses { expenses ->
             val totalSpent = expenses.sumOf { it.expenseAmount }
@@ -242,11 +263,20 @@ class BudgetFragment : Fragment() {
         }
     }
 
-    private fun loadLatestBudget() {
+    private fun loadLatestBudgetAndExpense() {
+        // 1) Load budgets
         FirebaseBudgetDbHelper.getAllBudgets { budgets ->
             budgetList.clear()
             budgetList.addAll(budgets)
-            adapter.notifyDataSetChanged()
+            adapter.setBudgets(budgetList)
+
+            // 2) Now load expenses
+            FirebaseExpenseDbHelper.getAllExpenses { expenses ->
+                expenseList.clear()
+                expenseList.addAll(expenses)
+                adapter.setExpenses(expenseList)
+            }
+
         }
     }
 

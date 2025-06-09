@@ -12,7 +12,8 @@ data class BudgetData(
     var budgetId: String = "",          // mapped to the Firebase key
     var budgetName: String = "",
     var budgetCategory: String = "",
-    var budgetAmount: Double = 0.0,
+    var budgetMinAmount: Double = 0.0,
+    var budgetMaxAmount: Double = 0.0,
     var budgetStartTime: Long = 0L,
     var budgetEndTime: Long = 0L,
     var budgetDesc: String = ""

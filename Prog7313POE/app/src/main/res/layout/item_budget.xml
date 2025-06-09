@@ -32,15 +32,6 @@
             android:layout_marginTop="4dp" />
 
         <TextView
-            android:id="@+id/tvBudgetAmount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Amount: R500"
-            android:textSize="16sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="2dp" />
-
-        <TextView
             android:id="@+id/tvBudgetDateRange"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,6 +39,22 @@
             android:text="From To"
             android:textColor="@android:color/darker_gray"
             android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvBudgetAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Amount: 0 - 0"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:max="100"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -26,12 +26,20 @@
             android:hint="Category" />
 
         <EditText
-            android:id="@+id/et_amount"
+            android:id="@+id/et_min_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="Amount"
-            android:inputType="numberDecimal" />
+            android:hint="Minimum Amount"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/et_max_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Maximum Amount"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp" />
 
         <EditText
             android:id="@+id/et_start_time"

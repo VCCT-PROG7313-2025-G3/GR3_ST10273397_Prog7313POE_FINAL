@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.example.prog7313poe.Database.Expenses.ExpenseData
 import com.example.prog7313poe.R
 import com.example.prog7313poe.databinding.FragmentTransactionsBinding // Firestore Timestamp class
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -113,7 +114,13 @@ class TransactionsFragment : Fragment() {
         val categorySpinner = dialogView.findViewById<Spinner>(R.id.spn_category)
         val amountInput = dialogView.findViewById<EditText>(R.id.et_amount)
         val dateInput = dialogView.findViewById<EditText>(R.id.et_date)
-        dateInput.inputType = InputType.TYPE_NULL
+        dateInput.apply {
+            showSoftInputOnFocus = false
+            inputType = InputType.TYPE_NULL
+            isFocusable = false
+            isCursorVisible = false
+            isClickable = true
+        }
 
         // Setup DatePickerDialog on click
         dateInput.setOnClickListener {
@@ -196,123 +203,135 @@ class TransactionsFragment : Fragment() {
         }
 
         btnSave.setOnClickListener {
+            // Immediate feedback
+            Toast.makeText(context, "Saving expense, please wait…", Toast.LENGTH_SHORT).show()
+            // Prevent duplicate taps
+            btnSave.isEnabled = false
+            // Show an indefinite snackbar
+            val snack = Snackbar.make(binding.root, "Saving expense…", Snackbar.LENGTH_INDEFINITE)
+            snack.show()
+
+            // Gather inputs
             val name = nameInput.text.toString().trim()
-            val category = categorySpinner.selectedItem?.toString()?.trim()
+            val category = categorySpinner.selectedItem?.toString()?.trim() ?: ""
             val amount = amountInput.text.toString().toDoubleOrNull() ?: 0.0
             val dateString = dateInput.text.toString().trim()
             val description = descInput.text.toString().trim()
 
-            if (name.isNotBlank() || category?.isNotBlank() == true || category == "Select category" || amount > 0 || dateString.isNotBlank()) {
-                // Parse the “yyyy-MM-dd” string into milliseconds
-                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val parsedDate: Date? = try {
-                    formatter.parse(dateString)
-                } catch (e: Exception) {
-                    null
-                }
-                val expenseDateMillis: Long = parsedDate?.time
-                    ?: System.currentTimeMillis() // fallback if parse fails
+            // Parse date
+            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val parsedDate = try {
+                formatter.parse(dateString)
+            } catch (e: Exception) {
+                null
+            }
+            val expenseDateMillis = parsedDate?.time ?: System.currentTimeMillis()
 
-                val newKey = expensesRef.push().key ?: UUID.randomUUID().toString()
+            // New Firebase key
+            val newKey = expensesRef.push().key ?: UUID.randomUUID().toString()
 
-                if (!selectedImagePath.isNullOrBlank()) {
-                    // Convert the stored String path into a Uri.
-                    // If selectedImagePath was from `GetContent()`, it'll be "content://..."
-                    // If it was from `Uri.fromFile(...)`, it'll be "file://..."
-                    val imageUri = Uri.parse(selectedImagePath)
+            // Build a helper to push and finish
+            fun finalizeExpense(expense: ExpenseData) {
+                // Optimistically insert into UI
+                expenseList.add(0, expense)
+                adapter.notifyItemInserted(0)
+                binding.rvExpenses.scrollToPosition(0)
 
-                    // Create a child “<newKey>.jpg” inside “expenses_photos/”
-                    val imageRef = photosRef.child("$newKey.jpg")
+                // Write to Firebase
+                expensesRef.child(expense.expenseId)
+                    .setValue(expense)
+                    .addOnSuccessListener {
+                        snack.dismiss()
+                        Toast.makeText(requireContext(), "Expense added", Toast.LENGTH_SHORT).show()
+                        btnSave.isEnabled = true
+                        dialog.dismiss()
+                    }
+                    .addOnFailureListener { e ->
+                        snack.dismiss()
+                        Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG)
+                            .show()
+                        btnSave.isEnabled = true
+                    }
+            }
 
-                    // Kick off the upload
-                    imageRef.putFile(imageUri)
-                        .addOnSuccessListener { taskSnapshot ->
-                            // Upload succeeded! Now grab the download URL:
-                            imageRef.downloadUrl
-                                .addOnSuccessListener { downloadUri ->
-                                    // Build your ExpenseData using the HTTP download URL:
-                                    val expense = ExpenseData(
-                                        expenseId = newKey,
-                                        expenseName = name,
-                                        expenseCategory = category.toString(),
-                                        expenseAmount = amount,
-                                        expenseDate = expenseDateMillis,
-                                        expenseDesc = description,
-                                        // Store the https://… download URL in the model
-                                        expensePhotoPath = downloadUri.toString()
-                                    )
+            if (!selectedImagePath.isNullOrBlank()) {
+                // Upload the image first
+                val imageUri = Uri.parse(selectedImagePath)
+                val imageRef = photosRef.child("$newKey.jpg")
 
-                                    onExpenseAdded(expense)
-                                    dialog.dismiss()
-                                }
-                                .addOnFailureListener { exc ->
-                                    // If we can’t get a download URL for some reason, still save the rest of the expense:
-                                    val fallbackExpense = ExpenseData(
-                                        expenseId = newKey,
-                                        expenseName = name,
-                                        expenseCategory = category.toString(),
-                                        expenseAmount = amount,
-                                        expenseDate = expenseDateMillis,
-                                        expenseDesc = description,
-                                        // Store an empty string so your adapter just shows a placeholder image
-                                        expensePhotoPath = ""
-                                    )
-                                    onExpenseAdded(fallbackExpense)
-                                    dialog.dismiss()
-                                    Toast.makeText(
-                                        context,
-                                        "Could not get photo URL: ${exc.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                        }
-                        .addOnFailureListener { exception ->
-                            // Upload failed entirely – skip the image and save without it:
-                            val noPhotoExpense = ExpenseData(
-                                expenseId = newKey,
-                                expenseName = name,
-                                expenseCategory = category.toString(),
-                                expenseAmount = amount,
-                                expenseDate = expenseDateMillis,
-                                expenseDesc = description,
-                                expensePhotoPath = ""
-                            )
-                            onExpenseAdded(noPhotoExpense)
-                            dialog.dismiss()
-                            Toast.makeText(
-                                context,
-                                "Photo upload failed: ${exception.message}",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                } else {
-                    // 5) No image selected: just save the expense with an empty photoPath
-                    val expense = ExpenseData(
-                        expenseId = newKey,
-                        expenseName = name,
-                        expenseCategory = category.toString(),
-                        expenseAmount = amount,
-                        expenseDate = expenseDateMillis,
-                        expenseDesc = description,
-                        expensePhotoPath = ""
-                    )
-                    onExpenseAdded(expense)
-                    dialog.dismiss()
-                }
+                imageRef.putFile(imageUri)
+                    .addOnSuccessListener {
+                        imageRef.downloadUrl
+                            .addOnSuccessListener { downloadUri ->
+                                val expense = ExpenseData(
+                                    expenseId = newKey,
+                                    expenseName = name,
+                                    expenseCategory = category,
+                                    expenseAmount = amount,
+                                    expenseDate = expenseDateMillis,
+                                    expenseDesc = description,
+                                    expensePhotoPath = downloadUri.toString()
+                                )
+                                finalizeExpense(expense)
+                            }
+                            .addOnFailureListener { _ ->
+                                // Fallback if URL fetch fails
+                                val expense = ExpenseData(
+                                    newKey,
+                                    name,
+                                    category,
+                                    amount,
+                                    expenseDateMillis,
+                                    description,
+                                    ""
+                                )
+                                finalizeExpense(expense)
+                                Toast.makeText(
+                                    context,
+                                    "Couldn’t get photo URL",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
+                    .addOnFailureListener {
+                        // Fallback if upload fails
+                        val expense = ExpenseData(
+                            newKey,
+                            name,
+                            category,
+                            amount,
+                            expenseDateMillis,
+                            description,
+                            ""
+                        )
+                        finalizeExpense(expense)
+                        Toast.makeText(context, "Photo upload failed", Toast.LENGTH_LONG).show()
+                    }
+            } else {
+                // No photo selected
+                val expense =
+                    ExpenseData(newKey, name, category, amount, expenseDateMillis, description, "")
+                finalizeExpense(expense)
             }
         }
         dialog.show()
     }
 
-    private fun addExpenseToRealtimeDb(expense: ExpenseData) {
+        private fun addExpenseToRealtimeDb(expense: ExpenseData) {
+        // 1) Optimistically add to UI
+        expenseList.add(0, expense)                            // add at top
+        adapter.notifyItemInserted(0)
+        binding.rvExpenses.scrollToPosition(0)
+
+        // 2) Push it to Firebase
         expensesRef.child(expense.expenseId)
             .setValue(expense)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Expense added", Toast.LENGTH_SHORT).show()
-                loadExpenses()
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "Error: ${it.message}", Toast.LENGTH_LONG).show()
+                // Optional: remove or mark failed item in UI
             }
     }
 
