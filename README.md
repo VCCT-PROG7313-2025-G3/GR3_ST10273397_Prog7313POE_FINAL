@@ -57,10 +57,7 @@ The app enables users to manage their income, expenses, and budgeting habits thr
 
 ## 🎥 Video Demonstration
 
-https://youtu.be/8kVB8duVHlk
-
-Lidvin's Video: https://www.loom.com/share/84a7477d82c341f88a0fe1ec084055e4
-
+https://youtu.be/qJldq-LnXPo?si=jeNHzLzMr2VkEjMx
 
 ---
 
