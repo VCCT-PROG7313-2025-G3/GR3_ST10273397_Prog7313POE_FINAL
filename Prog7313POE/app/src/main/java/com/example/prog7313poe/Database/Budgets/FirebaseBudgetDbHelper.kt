@@ -36,7 +36,8 @@ object FirebaseBudgetDbHelper {
     fun insertBudget(
         budgetName: String,
         budgetCategory: String,
-        budgetAmount: Double,
+        budgetMinAmount: Double,
+        budgetMaxAmount: Double,
         budgetStartTime: Long,
         budgetEndTime: Long,
         budgetDesc: String,
@@ -50,7 +51,8 @@ object FirebaseBudgetDbHelper {
             budgetId      = key,
             budgetName    = budgetName,
             budgetCategory = budgetCategory,
-            budgetAmount  = budgetAmount,
+            budgetMinAmount = budgetMinAmount,
+            budgetMaxAmount  = budgetMaxAmount,
             budgetStartTime = budgetStartTime,
             budgetEndTime   = budgetEndTime,
             budgetDesc     = budgetDesc
