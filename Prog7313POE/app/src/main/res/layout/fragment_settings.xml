@@ -40,14 +40,6 @@
         android:layout_marginBottom="16dp" />
 
     <Button
-        android:id="@+id/btn_switch_user"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Switch User"
-        android:layout_marginTop="16dp" />
-
-
-    <Button
         android:id="@+id/btn_logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

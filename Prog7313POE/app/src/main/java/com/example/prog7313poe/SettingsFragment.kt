@@ -32,18 +32,22 @@ class SettingsFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        val switchUserButton = view.findViewById<Button>(R.id.btn_switch_user)
-        switchUserButton.setOnClickListener {
-            // Clear saved session
+        val btnSwitchAccount = view.findViewById<Button>(R.id.btn_switch_account)
+        val btnLogout = view.findViewById<Button>(R.id.btn_logout)
+
+        btnSwitchAccount.setOnClickListener {
+            val intent = Intent(requireContext(), SwitchUserActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+
+        btnLogout.setOnClickListener {
             val prefs = requireActivity().getSharedPreferences("MY_APP_PREFS", AppCompatActivity.MODE_PRIVATE)
             prefs.edit().remove("CURRENT_USER_EMAIL").apply()
 
-            CurrentUser.email = ""
-
-            // Go back to login screen
             val intent = Intent(requireContext(), MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+            requireActivity().finish()
         }
     }
 }
