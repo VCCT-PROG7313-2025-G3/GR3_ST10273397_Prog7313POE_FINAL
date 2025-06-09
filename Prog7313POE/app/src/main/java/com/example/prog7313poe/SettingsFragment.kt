@@ -35,7 +35,6 @@ class SettingsFragment : Fragment() {
         val knownUsers = UserAccountManager.getKnownUsers(requireContext())
         android.util.Log.d("DEBUG_USER_LIST", "Known users in prefs: $knownUsers")
 
-        val btnSwitchAccount = view.findViewById<Button>(R.id.btn_switch_account)
         val btnLogout = view.findViewById<Button>(R.id.btn_logout)
         val quickSwitchSpinner = view.findViewById<Spinner>(R.id.spinner_quick_switch)
         val quickSwitchButton = view.findViewById<Button>(R.id.btn_quick_switch)
@@ -67,12 +66,6 @@ class SettingsFragment : Fragment() {
             val intent = Intent(requireContext(), MyHomeActivity::class.java)
             intent.putExtra("email", selectedEmail)
             startActivity(intent)
-        }
-
-        btnSwitchAccount.setOnClickListener {
-            val intent = Intent(requireContext(), SwitchUserActivity::class.java)
-            startActivity(intent)
-            requireActivity().finish()
         }
 
         btnLogout.setOnClickListener {
