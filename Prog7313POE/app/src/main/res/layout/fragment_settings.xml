@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -28,16 +29,19 @@
         <Switch
             android:id="@+id/switch_dark_mode"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
 
     <!-- Currency -->
     <TextView android:text="Currency:"  android:layout_height="30dp" android:layout_width="80dp"/>
+
     <Spinner
         android:id="@+id/spinner_currency"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:minHeight="48dp" />
 
     <Button
         android:id="@+id/btn_logout"
@@ -51,5 +55,26 @@
         android:layout_height="wrap_content"
         android:text="Switch User"
         android:layout_marginTop="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quick Switch User:"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spinner_quick_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btn_quick_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quick Switch" />
+
+
 </LinearLayout>
 

@@ -7,18 +7,20 @@
 
     <EditText
         android:id="@+id/et_email_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/et_password_switch"
-        android:hint="Password"
-        android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="12dp"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:minHeight="48dp" />
 
     <Button
         android:id="@+id/btn_switch_user"

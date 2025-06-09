@@ -34,6 +34,24 @@ class SettingsFragment : Fragment() {
 
         val btnSwitchAccount = view.findViewById<Button>(R.id.btn_switch_account)
         val btnLogout = view.findViewById<Button>(R.id.btn_logout)
+        val quickSwitchSpinner = view.findViewById<Spinner>(R.id.spinner_quick_switch)
+        val quickSwitchButton = view.findViewById<Button>(R.id.btn_quick_switch)
+
+        val userList = UserAccountManager.getKnownUsers(requireContext()).toList()
+        val quickSwitchAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, userList)
+        quickSwitchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        quickSwitchSpinner.adapter = quickSwitchAdapter
+
+        quickSwitchButton.setOnClickListener {
+            val selectedEmail = quickSwitchSpinner.selectedItem.toString()
+            UserAccountManager.switchUser(requireContext(), selectedEmail)
+            CurrentUser.email = selectedEmail
+
+            val intent = Intent(requireContext(), MyHomeActivity::class.java)
+            intent.putExtra("email", selectedEmail)
+            startActivity(intent)
+        }
+
 
         btnSwitchAccount.setOnClickListener {
             val intent = Intent(requireContext(), SwitchUserActivity::class.java)

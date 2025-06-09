@@ -43,6 +43,7 @@ class SwitchUserActivity : AppCompatActivity() {
                 if (result is com.example.prog7313poe.loginData.Result.Success) {
                     CurrentUser.email = email
                     Toast.makeText(this@SwitchUserActivity, "Switched to $email", Toast.LENGTH_SHORT).show()
+                    UserAccountManager.saveUser(this@SwitchUserActivity, email)
 
                     val intent = Intent(this@SwitchUserActivity, MyHomeActivity::class.java)
                     intent.putExtra("email", email)
