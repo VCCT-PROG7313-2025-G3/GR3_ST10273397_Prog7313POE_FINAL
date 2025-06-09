@@ -5,6 +5,12 @@ plugins {
     kotlin("kapt")
 }
 
+repositories {
+    google()
+    mavenCentral()
+    maven("https://jitpack.io")
+}
+
 android {
     namespace = "com.example.prog7313poe"
     compileSdk = 35
@@ -63,6 +69,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
 
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+
+    implementation(libs.mpandroidchart)
 
 
 }
