@@ -108,6 +108,7 @@ class MyUserRegistrationActivity : AppCompatActivity() {
                             // 4) Save “logged-in” flag in SharedPreferences if desired
                             val prefs = getSharedPreferences("MY_APP_PREFS", MODE_PRIVATE)
                             prefs.edit().putString("CURRENT_USER_EMAIL", email).apply()
+                            UserAccountManager.addKnownUser(this@MyUserRegistrationActivity, email)
 
                             // 5) Navigate to home screen
                             val intent = Intent(this@MyUserRegistrationActivity, MyHomeActivity::class.java)
