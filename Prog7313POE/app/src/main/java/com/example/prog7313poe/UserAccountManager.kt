@@ -12,7 +12,7 @@ object UserAccountManager {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 
-    fun saveUser(context: Context, email: String) {
+    fun addKnownUser(context: Context, email: String) {
         val editor = prefs(context).edit()
         val userSet = getKnownUsers(context).toMutableSet()
         userSet.add(email)

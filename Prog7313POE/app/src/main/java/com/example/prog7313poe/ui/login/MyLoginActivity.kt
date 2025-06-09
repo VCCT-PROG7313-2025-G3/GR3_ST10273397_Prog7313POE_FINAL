@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.prog7313poe.databinding.ActivityMyLoginBinding
 import com.example.prog7313poe.R
 import com.example.prog7313poe.MyHomeActivity
+import com.example.prog7313poe.UserAccountManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
@@ -70,12 +71,15 @@ class MyLoginActivity : AppCompatActivity() {
             // If login was successful, proceed to the home screen
             if (result.success != null) {
                 updateUiWithUser(result.success)
-                // Navigate to home screen
+
+                val currentEmail = binding.etxtEmail?.text.toString()
+                UserAccountManager.addKnownUser(this, currentEmail) //Save to shared prefs
+
                 val intent = Intent(this, MyHomeActivity::class.java)
-                intent.putExtra("email", binding.etxtEmail?.text.toString())
+                intent.putExtra("email", currentEmail)
                 startActivity(intent)
                 setResult(Activity.RESULT_OK)
-                finish() // Close the current activity
+                finish()
             }
         })
 

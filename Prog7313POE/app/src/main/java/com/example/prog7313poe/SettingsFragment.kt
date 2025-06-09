@@ -32,18 +32,35 @@ class SettingsFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
+        val knownUsers = UserAccountManager.getKnownUsers(requireContext())
+        android.util.Log.d("DEBUG_USER_LIST", "Known users in prefs: $knownUsers")
+
         val btnSwitchAccount = view.findViewById<Button>(R.id.btn_switch_account)
         val btnLogout = view.findViewById<Button>(R.id.btn_logout)
         val quickSwitchSpinner = view.findViewById<Spinner>(R.id.spinner_quick_switch)
         val quickSwitchButton = view.findViewById<Button>(R.id.btn_quick_switch)
 
         val userList = UserAccountManager.getKnownUsers(requireContext()).toList()
-        val quickSwitchAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, userList)
+        val currentEmail = CurrentUser.email
+
+        // Display emails with "(Current)" label
+        val displayList = userList.map { email ->
+            if (email == currentEmail) "$email (Current)" else email
+        }
+
+        val quickSwitchAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, displayList)
         quickSwitchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         quickSwitchSpinner.adapter = quickSwitchAdapter
 
+        // Set the spinner to the current user
+        val currentIndex = userList.indexOf(currentEmail)
+        if (currentIndex >= 0) {
+            quickSwitchSpinner.setSelection(currentIndex)
+        }
+
         quickSwitchButton.setOnClickListener {
-            val selectedEmail = quickSwitchSpinner.selectedItem.toString()
+            val selectedIndex = quickSwitchSpinner.selectedItemPosition
+            val selectedEmail = userList[selectedIndex]
             UserAccountManager.switchUser(requireContext(), selectedEmail)
             CurrentUser.email = selectedEmail
 
@@ -51,7 +68,6 @@ class SettingsFragment : Fragment() {
             intent.putExtra("email", selectedEmail)
             startActivity(intent)
         }
-
 
         btnSwitchAccount.setOnClickListener {
             val intent = Intent(requireContext(), SwitchUserActivity::class.java)

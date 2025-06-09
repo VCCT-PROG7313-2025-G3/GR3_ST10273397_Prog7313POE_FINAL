@@ -67,7 +67,8 @@
         android:id="@+id/spinner_quick_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        android:minHeight="48dp" />
 
     <Button
         android:id="@+id/btn_quick_switch"
