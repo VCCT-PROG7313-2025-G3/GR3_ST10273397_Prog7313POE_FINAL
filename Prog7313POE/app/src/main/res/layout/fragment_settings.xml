@@ -50,6 +50,14 @@
         android:layout_marginTop="16dp"
         android:textStyle="bold" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Use the dropdown below to switch between accounts you've previously logged into. To add more accounts, log out and sign in or register a new account."
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@android:color/darker_gray" />
+
     <Spinner
         android:id="@+id/spinner_quick_switch"
         android:layout_width="match_parent"
