@@ -67,8 +67,8 @@ Lidvin's Video: https://www.loom.com/share/84a7477d82c341f88a0fe1ec084055e4
 ## 🚀 How to Run
 
 1. Clone the repository
-2. Open in Android Studio Arctic Fox or later
-3. Build and run on Android device or emulator (API 21+)
+2. Open in Android Studio Meerkat
+3. Build and run on Pixel 9 Android 16.0 Baklava (API 36)
 4. Register a new user and start managing expenses
 
 ---
